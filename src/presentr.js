@@ -107,7 +107,7 @@ function Presentr(opt = {}) {
             }
 
             // Fire event
-            that.options.onSlide(that.index, that.slides.length - 1);
+            that.options.onSlide(that, index, that.slides.length - 1);
 
             // Apply index
             that.slideIndex = index;
@@ -142,7 +142,7 @@ function Presentr(opt = {}) {
             }
 
             // Fire event
-            that.options.onFragment(that.index, fragments.length - 1);
+            that.options.onFragment(that, index, fragments.length - 1);
 
             // Apply index
             that.fragmentIndex = index;
