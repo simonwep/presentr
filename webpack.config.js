@@ -1,3 +1,5 @@
+const UglifyJs = require('uglifyjs-webpack-plugin');
+
 module.exports = {
 
     entry: './src/presentr.js',
@@ -24,5 +26,20 @@ module.exports = {
                 loader: 'babel-loader'
             }
         ]
-    }
+    },
+
+    plugins: [
+        new UglifyJs({
+            uglifyOptions: {
+                output: {
+                    comments: false
+                },
+                mangle: {
+                    properties: {
+                        regex: /^_/
+                    }
+                }
+            }
+        })
+    ]
 };
