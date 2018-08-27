@@ -1,28 +1,4 @@
 /**
- * Add an eventlistener to an element.
- * @param element
- * @param event
- * @param fn Callback
- * @param options Optional options
- * @return Array passed arguments
- */
-export const on = eventListener.bind(null, 'addEventListener');
-
-/**
- * Removes an eventlistener to an element.
- * @param element
- * @param event
- * @param fn Callback
- * @param options Optional options
- * @return Array passed arguments
- */
-export const off = eventListener.bind(null, 'removeEventListener');
-
-function eventListener(method, element, event, fn, ctx, options = {}) {
-    element[method](event, fn, {capture: false, ...options});
-}
-
-/**
  * Deep version of apply, doesn't support circular references
  * @param source
  * @param target
@@ -69,14 +45,4 @@ export function css(el, props) {
     const styleNode = document.createElement('style');
     styleNode.innerHTML = `${selector}{${styles}}`;
     document.head.insertAdjacentElement('afterbegin', styleNode);
-}
-
-/**
- * Query-selector, returns array.
- * @param query
- * @param base
- * @returns {T[]}
- */
-export function selectAll(query, base = document) {
-    return Array.from(base.querySelectorAll(query));
 }

@@ -36,16 +36,17 @@ function Presentr(opt = {}) {
             }, opt);
 
             this._initActive = true;
+            const queryAll = (query, base) => Array.from(base.querySelectorAll(query));
 
             // Slides
             that._slideIndex = 0;
-            that._slides = _.selectAll(that.options.slides);
+            that._slides = queryAll(that.options.slides, document);
             that._presentrSlides = that._slides[0].parentElement;
             that._presentrRoot = that._presentrSlides.parentElement;
 
             // Fragments
             that._fragmentIndex = 0;
-            that._fragments = that._slides.map(s => _.selectAll(that.options.fragments, s));
+            that._fragments = that._slides.map(s => queryAll(that.options.fragments, s));
 
             // Inject styles
             _.css(that._presentrRoot, {'overflow': 'hidden'});
@@ -65,7 +66,7 @@ function Presentr(opt = {}) {
             });
 
             // Bind shortcuts
-            _.on(window, 'keyup', that._keyboardInput);
+            window.addEventListener('keyup', that._keyboardInput);
 
             // Trigger
             that.jumpSlide(that.options.slideIndex);
@@ -167,7 +168,7 @@ function Presentr(opt = {}) {
         },
 
         // Remove shortcuts
-        destroy: () => _.off(window, 'keyup', that._keyboardInput),
+        destroy: () => window.removeEventListener('keyup', that._keyboardInput),
 
         // Version
         version: '0.0.1'
