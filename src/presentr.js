@@ -13,7 +13,6 @@ function Presentr(opt = {}) {
             that.options = _.applyDeep({
 
                 slides: '.presentr .slides > section',
-                progress: '.presentr .progress',
                 fragments: '.frag',
 
                 activeSlideClass: 'active',
@@ -47,9 +46,6 @@ function Presentr(opt = {}) {
             that._fragmentIndex = 0;
             that._fragments = that._slides.map(s => _.selectAll(that.options.fragments, s));
 
-            // Components
-            that._progress = document.querySelector(that.options.progress);
-
             // Inject styles
             _.css(that._presentrRoot, {'overflow': 'hidden'});
             _.css(that._presentrSlides, {
@@ -65,16 +61,6 @@ function Presentr(opt = {}) {
                 'flex-shrink': '0',
                 'width': '100vw',
                 'height': '100vh'
-            });
-
-            _.css(that.options.progress, {
-                'position': 'fixed',
-                'top': '0',
-                'left': '0',
-                'width': '100%',
-                'height': '0.5em',
-                'background': 'black',
-                'z-index': '10'
             });
 
             // Bind shortcuts
@@ -147,9 +133,6 @@ function Presentr(opt = {}) {
 
             // Update fragment index
             that._fragmentIndex = that._fragments[index].reduce((ac, cv, ci) => cv.classList.contains(that.options.activeFragmentClass) ? ci + 1 : ac, 0);
-
-            // Update _progress
-            that._progress.style.width = `${(index / (that._slides.length - 1)) * 100}%`;
             return true;
         },
 
