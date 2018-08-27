@@ -30,7 +30,8 @@ function Presentr(opt = {}) {
                 },
 
                 onSlide: () => 0,
-                onFragment: () => 0
+                onFragment: () => 0,
+                onAction: () => 0
 
             }, opt);
 
@@ -86,9 +87,13 @@ function Presentr(opt = {}) {
                 const fragmentIndex = this._fragmentIndex + 1;
                 const fragments = this._fragments.length - 1;
                 const fragmentPercent = fragmentIndex / fragments;
+                const obj = {presentr, slideIndex, slides, slidePercent, fragmentIndex, fragments, fragmentPercent};
 
                 // Call event-listener
-                fn({presentr, slideIndex, slides, slidePercent, fragmentIndex, fragments, fragmentPercent});
+                fn(obj);
+
+                // Call action listener
+                this.options.onAction(obj);
             }
         },
 
