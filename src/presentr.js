@@ -35,6 +35,8 @@ function Presentr(opt = {}) {
 
             }, opt);
 
+            this._initActive = true;
+
             // Slides
             that._slideIndex = 0;
             that._slides = _.selectAll(that.options.slides);
@@ -80,6 +82,28 @@ function Presentr(opt = {}) {
 
             // Trigger
             that.jumpSlide(that.options.slideIndex);
+            this._initActive = false;
+        },
+
+        // Helper function to fire events
+        _fireEvent(name) {
+            const fn = this.options[name];
+
+            // Check if presentr is currently in initialization mode and cb is a function
+            if (!this._initActive && typeof fn === 'function') {
+
+                // Pre-calculations cause slides and fragments starts at one, not zero.
+                const presentr = this;
+                const slideIndex = this._slideIndex + 1;
+                const slides = this._slides.length - 1;
+                const slidePercent = slideIndex / slides;
+                const fragmentIndex = this._fragmentIndex + 1;
+                const fragments = this._fragments.length - 1;
+                const fragmentPercent = fragmentIndex / fragments;
+
+                // Call event-listener
+                fn({presentr, slideIndex, slides, slidePercent, fragmentIndex, fragments, fragmentPercent});
+            }
         },
 
         _keyboardInput(e) {
@@ -107,7 +131,7 @@ function Presentr(opt = {}) {
             }
 
             // Fire event
-            that.options.onSlide(that, index, that._slides.length - 1);
+            that._fireEvent('onSlide');
 
             // Apply index
             that._slideIndex = index;
@@ -142,7 +166,7 @@ function Presentr(opt = {}) {
             }
 
             // Fire event
-            that.options.onFragment(that, index, fragments.length - 1);
+            that._fireEvent('onFragment');
 
             // Apply index
             that._fragmentIndex = index;
