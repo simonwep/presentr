@@ -35,7 +35,7 @@ function Presentr(opt = {}) {
 
             }, opt);
 
-            this._initActive = true;
+            that._initActive = true;
             const queryAll = (query, base) => Array.from(base.querySelectorAll(query));
 
             // Slides
@@ -70,23 +70,23 @@ function Presentr(opt = {}) {
 
             // Trigger
             that.jumpSlide(that.options.slideIndex);
-            this._initActive = false;
+            that._initActive = false;
         },
 
         // Helper function to fire events
         _fireEvent(name) {
-            const fn = this.options[name];
+            const fn = that.options[name];
 
             // Check if presentr is currently in initialization mode and cb is a function
-            if (!this._initActive && typeof fn === 'function') {
+            if (!that._initActive && typeof fn === 'function') {
 
                 // Pre-calculations cause slides and fragments starts at one, not zero.
-                const presentr = this;
-                const slideIndex = this._slideIndex + 1;
-                const slides = this._slides.length - 1;
+                const presentr = that;
+                const slideIndex = that._slideIndex + 1;
+                const slides = that._slides.length - 1;
                 const slidePercent = slideIndex / slides;
-                const fragmentIndex = this._fragmentIndex + 1;
-                const fragments = this._fragments.length - 1;
+                const fragmentIndex = that._fragmentIndex + 1;
+                const fragments = that._fragments.length - 1;
                 const fragmentPercent = fragmentIndex / fragments;
                 const obj = {presentr, slideIndex, slides, slidePercent, fragmentIndex, fragments, fragmentPercent};
 
@@ -94,7 +94,7 @@ function Presentr(opt = {}) {
                 fn(obj);
 
                 // Call action listener
-                this.options.onAction(obj);
+                that.options.onAction(obj);
             }
         },
 
