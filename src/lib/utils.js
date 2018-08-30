@@ -7,9 +7,7 @@
 export function applyDeep(target = {}, source) {
 
     for (let k in source) {
-        if (!(k in target)) {
-            target[k] = source[k];
-        } else if (typeof target[k] === 'object') {
+        if (target[k] !== null && typeof target[k] === 'object') {
             target[k] = applyDeep(source[k], target[k]);
         } else {
             target[k] = source[k];
@@ -25,10 +23,10 @@ export function applyDeep(target = {}, source) {
  */
 export function css(el, props) {
 
-    // Create unique identifier or use existing
+    // Create unique identifier or use existing selector query
     let selector;
     if (el instanceof HTMLElement) {
-        const id = `id-${Math.floor(Math.random() * 1e10)}`;
+        const id = `presentr-${Math.floor(Math.random() * 1e10)}`;
         selector = `.${id}`;
         el.classList.add(id);
     } else {
@@ -36,12 +34,9 @@ export function css(el, props) {
     }
 
     // Create style string
-    let styles = '';
-    for (let k in props) {
-        styles += `${k}:${props[k]};`;
-    }
+    const styles = Object.keys(props).reduce((acc, cv) => acc + `${cv}:${props[cv]};`, '');
 
-    // Apppend styles
+    // Append styles before first header element to allow overwriting
     const styleNode = document.createElement('style');
     styleNode.innerHTML = `${selector}{${styles}}`;
     document.head.insertAdjacentElement('afterbegin', styleNode);

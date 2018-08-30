@@ -7,44 +7,46 @@ function Presentr(opt = {}) {
 
     const that = {
 
+
+        // Assign default options
+        options: _.applyDeep({
+
+            slides: '.presentr .slides > section',
+            fragments: '.frag',
+
+            activeSlideClass: 'active',
+            currentSlideClass: 'current-slide',
+            activeFragmentClass: 'active',
+            currentFragmentClass: 'current-frag',
+
+            slideIndex: 0,
+
+            shortcuts: {
+                nextSlide: ['d', 'D'],
+                previousSlide: ['a', 'A'],
+                nextFragment: ['ArrowRight', 'ArrowDown'],
+                previousFragment: ['ArrowLeft', 'ArrowUp']
+            },
+
+            onSlide: () => 0,
+            onFragment: () => 0,
+            onAction: () => 0
+
+        }, opt),
+
         _init() {
 
-            // Assign default options
-            that.options = _.applyDeep({
-
-                slides: '.presentr .slides > section',
-                fragments: '.frag',
-
-                activeSlideClass: 'active',
-                currentSlideClass: 'current-slide',
-                activeFragmentClass: 'active',
-                currentFragmentClass: 'current-frag',
-
-                slideIndex: 0,
-
-                shortcuts: {
-                    nextSlide: ['d', 'D'],
-                    previousSlide: ['a', 'A'],
-                    nextFragment: ['ArrowRight', 'ArrowDown'],
-                    previousFragment: ['ArrowLeft', 'ArrowUp']
-                },
-
-                onSlide: () => 0,
-                onFragment: () => 0,
-                onAction: () => 0
-
-            }, opt);
-
+            // Initialization state
             that._initActive = true;
             const queryAll = (query, base) => Array.from(base.querySelectorAll(query));
 
-            // Slides
+            // Slides stuff
             that._slideIndex = 0;
             that._slides = queryAll(that.options.slides, document);
             that._presentrSlides = that._slides[0].parentElement;
             that._presentrRoot = that._presentrSlides.parentElement;
 
-            // Fragments
+            // Fragments stuff
             that._fragmentIndex = 0;
             that._fragments = that._slides.map(s => queryAll(that.options.fragments, s));
 
@@ -103,7 +105,7 @@ function Presentr(opt = {}) {
             const {shortcuts} = that.options;
             const fns = ['nextSlide', 'previousSlide', 'nextFragment', 'previousFragment']; // Available shortcuts
 
-            // Check if multiple keys are binded
+            // Find corresponding shortcut action
             const target = Object.keys(shortcuts).find(v => {
                 const code = shortcuts[v];
                 return Array.isArray(code) ? code.find(match) : match(code);
@@ -131,7 +133,7 @@ function Presentr(opt = {}) {
             // Update offset
             that._presentrSlides.style.left = `-${index * 100}vw`;
 
-            // Set active class
+            // Apply class for previous and current slide(s)
             for (let i = 0, cl, n = that._slides.length; i < n && (cl = that._slides[i].classList); i++) {
                 cl[i <= index ? 'add' : 'remove'](that.options.activeSlideClass);
                 cl[i === index ? 'add' : 'remove'](that.options.currentSlideClass);
@@ -157,7 +159,7 @@ function Presentr(opt = {}) {
             // Fire event
             that._fireEvent('onFragment');
 
-            // Apply index
+            // Apply class for previous and current fragment(s)
             that._fragmentIndex = index;
             for (let i = 0, cl, n = fragments.length; i < n && (cl = fragments[i].classList); i++) {
                 cl[i < index ? 'add' : 'remove'](that.options.activeFragmentClass);
@@ -168,14 +170,14 @@ function Presentr(opt = {}) {
         },
 
         // Remove shortcuts
-        destroy: () => window.removeEventListener('keyup', that._keyboardInput),
-
-        // Version
-        version: '0.0.1'
+        destroy: () => window.removeEventListener('keyup', that._keyboardInput)
     };
 
     that._init();
     return that;
 }
 
+Presentr.version = '0.0.1';
+
+// Export factory funcion
 module.exports = Presentr;
