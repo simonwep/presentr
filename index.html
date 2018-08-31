@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- Chrome, Firefox OS and Opera -->
+    <meta name="theme-color" content="#FF4446">
+
+    <!-- Windows Phone -->
+    <meta name="msapplication-navbutton-color" content="#FF4446">
+
+    <!-- iOS Safari -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="#FF4446">
+
+    <!-- SEO Stuff -->
+    <meta name="audience" lang="en" content="all">
+    <meta name="expires" content="7 days">
+    <meta name="robots" content="follow">
+    <meta name="revisit-after" content="7 days">
+    <meta name="page-topic" content="Javascript Presentation Library">
+    <meta name="copyright" content="Simon Reinisch">
+    <meta name="author" content="Simon Reinisch">
+    <meta name="description"
+          content="Minimalistic javascript presentation-library. Zero dependencies. Can be used in combination with frameworks like Bootstrap, Materialize, Vue etc.">
+    <meta name="keywords" content="presentations, presentation, js-libray, slides, slideshow">
+
+    <!-- Open Graph tags -->
+    <meta property="og:image" content="/logo.png">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://simonwep.github.io/presentr/">
+    <meta property="og:site_name" content="Presentr">
+    <meta property="og:title" content="Presentr">
+    <meta property="og:description"
+          content="Minimalistic javascript presentation-library. Zero dependencies. Can be used in combination with frameworks like Bootstrap, Materialize, Vue etc.">
+
+    <title>Presentr</title>
+
+    <!-- Icons -->
+    <link rel="icon" href="logo.png">
+    <link rel="fluid-icon" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png"/>
+
+    <!-- Style sheets -->
+    <link rel="stylesheet" href="demo/styles.css">
+</head>
+<body>
+
+
+<div class="presentr">
+    <div class="progress"></div>
+
+    <div class="slides">
+
+        <!-- Slide 1 -->
+        <section class="welcome">
+            <h1>Presentr</h1>
+
+            <div class="keyboard-shortcuts">
+                <p>Use <b>Arrow Left | Right</b> to navigate.</p>
+                <p>On touch tap on the <b>left / right side</b> of the screen.</p>
+            </div>
+        </section>
+
+        <!-- Slide 2 -->
+        <section class="features">
+            <h2 class="frag">Features</h2>
+
+            <div class="list">
+                <p class="frag">Simple usage</p>
+                <p class="frag">No jQuery</p>
+                <p class="frag">No dependencies</p>
+                <p class="frag">Hackable / Extensible</p>
+                <p class="frag">Ultra small, only 1.8 kB gzipped</p>
+            </div>
+        </section>
+
+        <!-- Slide 3 -->
+        <section class="setup">
+            <h2 class="frag">Setup</h2>
+
+            <div class="methods">
+                <div class="frag method">
+                    <h3>Install via npm</h3>
+                    <code>$ npm install @simonwep/presentr --save</code>
+                </div>
+
+                <div class="frag method">
+                    <h3>Import in node</h3>
+                    <code>import Presentr from 'Presentr'</code>
+                </div>
+
+                <div class="frag method">
+                    <h3>Or via jsdelivr</h3>
+                    <code>&lt;script src=&quot;https://cdn.jsdelivr.net/npm/@simonwep/presentr/dist/presentr.min.js&quot;&gt;&lt;/script&gt;</code>
+                </div>
+
+                <div class="frag method">
+                    <h3>Or directly</h3>
+                    <code>&lt;script src=&quot;node_modules/@simonwep/presentr/dist/presentr.min.js&quot;&gt;&lt;/script&gt;</code>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 4 -->
+        <section class="gh">
+            <h2>Contribute!</h2>
+            <a href="https://github.com/Simonwep/presentr">GitHub</a>
+        </section>
+    </div>
+
+</div>
+
+<script src="dist/presentr.min.js"></script>
+<script src="demo/code.js"></script>
+</body>
+</html>

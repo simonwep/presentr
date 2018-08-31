@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,600|Satisfy');
+
 * {
     margin: 0;
     padding: 0;
@@ -8,16 +10,17 @@ body {
 }
 
 .presentr {
-
+    font-family: 'Montserrat';
+    font-size: 1vw;
 }
 
 .presentr .progress {
     position: fixed;
-    background: gray;
+    background: #ff4446;
     top: 0;
     left: 0;
     width: 0;
-    height: 0.3em;
+    height: 0.2vh;
     z-index: 1;
     transition: all 1s;
 }
@@ -27,21 +30,154 @@ body {
 }
 
 .presentr .slides section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     transition: all 0.3s;
     filter: grayscale(100%);
-    transform: scale(0.95);
 }
 
-.presentr .slides section.active {
+.presentr .slides section h2 {
+    font-family: 'Satisfy';
+    font-size: 8em;
+    color: #ff4446;
+    margin-bottom: 5vh;
+}
+
+.presentr .slides section h2,
+.presentr .slides section.welcome h1 {
+    text-shadow: 2px 2px 0 #862224;
+}
+
+.presentr .slides section.welcome .keyboard-shortcuts {
+    text-align: center;
+    color: rgba(0, 0, 0, 0.75);
+    font-size: 1.3em;
+}
+
+.presentr .slides section.welcome .keyboard-shortcuts p {
+    transform: translateY(-0.5vh);
+    opacity: 0;
+    margin: 0.3em 0;
+    animation: normalize 0.7s ease forwards;
+}
+
+.presentr .slides section.welcome .keyboard-shortcuts p:nth-child(2) {
+    animation-delay: 0.5s;
+}
+
+.presentr .slides section.welcome .keyboard-shortcuts b {
+    font-weight: 600;
+}
+
+.presentr .slides section.welcome h1 {
+    font-family: 'Satisfy';
+    font-size: 10em;
+    color: #ff4446;
+}
+
+.presentr .slides section.features .list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.presentr .slides section.features .list p {
+    color: rgba(0, 0, 0, 0.85);
+    display: inline-block;
+    position: relative;
+    margin: 0.5em 0;
+    padding: 0.3em 0.4em 0 0.4em;
+    font-size: 2em;
+    text-align: center;
+}
+
+.presentr .slides section.features .list p::before {
+    position: absolute;
+    content: '';
+    bottom: -0.2em;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 0;
+    height: 100%;
+    background: #ff4446;
+    transition: all 0.5s;
+    z-index: -1;
+}
+
+.presentr .slides section.features .list p.current-frag {
+    color: white;
+}
+
+.presentr .slides section.features .list p.current-frag::before {
+    width: 100%;
+}
+
+.presentr .slides section.setup .methods {
+    display: flex;
+    flex-direction: column;
+}
+
+.presentr .slides section.setup .methods .method {
+    margin-bottom: 3em;
+}
+
+.presentr .slides section.setup .methods .method h3 {
+    font-size: 1.5em;
+    font-weight: 400;
+    margin-bottom: 0.8em;
+    color: rgba(0, 0, 0, 0.85);
+}
+
+.presentr .slides section.setup .methods .method code {
+    background: #f6f8fa;
+    padding: 0.8em 1.2em;
+    transition: all 0.5s;
+    border-bottom: 2px solid #f6f8fa;
+}
+
+.presentr .slides section.setup .methods .method.current-frag code {
+    border-bottom: 2px solid #ff4446;
+}
+
+.presentr .slides section.gh a {
+    cursor: pointer;
+    outline: none;
+    text-decoration: none;
+    background: #ff4446;
+    color: white;
+    font-size: 3em;
+    padding: 0.8em 1.5em;
+    box-shadow: 2px 2px 0 0 #862224,
+    1px 1px 0 0 #862224;
+    transition: all 0.3s;
+}
+
+.presentr .slides section.gh a:hover {
+    background: #d73b3d;
+}
+
+.presentr .slides section.current-slide {
     transform: none;
     filter: none;
 }
 
 .presentr .slides .frag {
     opacity: 0;
-    transition: all 0.3s;
+    transform: translateY(-0.5vh);
+    transition: all 0.5s;
 }
 
 .presentr .slides .frag.active {
+    transform: none;
     opacity: 1;
+}
+
+@keyframes normalize {
+    to {
+        transform: none;
+        opacity: 1;
+    }
 }
