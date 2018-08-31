@@ -83,19 +83,22 @@ function Presentr(opt = {}) {
 
                 // Pre-calculations cause slides and fragments starts at one, not zero.
                 const presentr = that;
-                const slideIndex = that._slideIndex + 1;
+
+                const slideIndex = that._slideIndex;
                 const slides = that._slides.length - 1;
-                const slidePercent = slideIndex / slides;
-                const fragmentIndex = that._fragmentIndex + 1;
-                const fragments = that._fragments.length - 1;
-                const fragmentPercent = fragmentIndex / fragments;
-                const obj = {presentr, slideIndex, slides, slidePercent, fragmentIndex, fragments, fragmentPercent};
+                const slidePercent = slides === 0 ? 0 : slideIndex / slides;
+
+                const fragmentIndex = that._fragmentIndex;
+                const fragments = that._fragments[slideIndex].length;
+                const fragmentPercent = fragments === 0 ? 0 : fragmentIndex / fragments;
+
+                const state = {presentr, slideIndex, slides, slidePercent, fragmentIndex, fragments, fragmentPercent};
 
                 // Call event-listener
-                fn(obj);
+                fn(state);
 
                 // Call action listener
-                that.options.onAction(obj);
+                that.options.onAction(state);
             }
         },
 
@@ -123,9 +126,6 @@ function Presentr(opt = {}) {
                 return false;
             }
 
-            // Fire event
-            that._fireEvent('onSlide');
-
             // Apply index
             that._slideIndex = index;
 
@@ -140,6 +140,10 @@ function Presentr(opt = {}) {
 
             // Update fragment index
             that._fragmentIndex = that._fragments[index].reduce((ac, cv, ci) => cv.classList.contains(that.options.activeFragmentClass) ? ci + 1 : ac, 0);
+
+            // Fire event
+            that._fireEvent('onSlide');
+
             return true;
         },
 
@@ -155,15 +159,15 @@ function Presentr(opt = {}) {
                 return that.nextSlide();
             }
 
-            // Fire event
-            that._fireEvent('onFragment');
-
             // Apply class for previous and current fragment(s)
             that._fragmentIndex = index;
             for (let i = 0, cl, n = fragments.length; i < n && (cl = fragments[i].classList); i++) {
                 cl[i < index ? 'add' : 'remove'](that.options.activeFragmentClass);
                 cl[i === index - 1 ? 'add' : 'remove'](that.options.currentFragmentClass);
             }
+
+            // Fire event
+            that._fireEvent('onFragment');
 
             return true;
         },
