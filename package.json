@@ -1,7 +1,7 @@
 {
-    "name": "presentr",
+    "name": "@simonwep/presentr",
     "version": "0.0.1",
-    "description": "Minimalistic javascript presentation-framework core.",
+    "description": "Minimalistic and extensible javascript presentation-library.",
     "main": "index.js",
     "scripts": {
         "build": "webpack --mode production",

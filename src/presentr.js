@@ -7,7 +7,6 @@ function Presentr(opt = {}) {
 
     const that = {
 
-
         // Assign default options
         options: _.applyDeep({
 
