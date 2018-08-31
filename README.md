@@ -3,7 +3,7 @@
 </h1>
 
 <h3 align="center">
-    Minimalistic. Hackable. Fast.
+    Minimalistic, Hackable, Fast Presentation Library.
 </h3>
 
 <p align="center">
@@ -37,7 +37,7 @@
 
 Why another library to provide the ability to create a presentation in your browser? 
 Isn't there already Revealjs which is good and reliable? 
-Yeah, thought the same. But I was looking for some library which I can use in combination with React, Vue, Bootstrap, Materialize or whatever library I want. 
+Yeah, thought the same. But I was looking for a library which I can use in combination with React, Vue, Bootstrap, Materialize or whatever library I want. 
 Something which only provides the essential functionalities like slides and fragments. 
 So I've decided to write an absolutly basic, simple but functional library to provide these things.
 
@@ -51,7 +51,7 @@ $ npm install @simonwep/presentr --save
 
 Include code and style:
 ```js
-import Presentr from '/node_modules/@simonwep/presentr/dist/presentr.min';
+import Presentr from 'Presentr';
 ```
 ---
 ### Browser

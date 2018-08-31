@@ -13,7 +13,7 @@ module.exports = {
     },
 
     devServer: {
-        contentBase: __dirname + '/demo',
+        contentBase: __dirname + '/',
         host: '0.0.0.0',
         port: 3008
     },

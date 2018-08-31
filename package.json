@@ -2,14 +2,14 @@
     "name": "@simonwep/presentr",
     "version": "0.0.1",
     "description": "Minimalistic and extensible javascript presentation-library.",
-    "main": "index.js",
+    "main": "./dist/presentr.min.js",
     "scripts": {
         "build": "webpack --mode production",
         "dev": "webpack-dev-server --mode development"
     },
     "keywords": [
         "presentations",
-        "presentaion",
+        "presentation",
         "js-libray",
         "slides",
         "slideshow"
