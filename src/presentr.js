@@ -23,6 +23,10 @@ function Presentr(opt = {}) {
             shortcuts: {
                 nextSlide: ['d', 'D'],
                 previousSlide: ['a', 'A'],
+
+                firstSlide: ['y', 'Y'],
+                lastSlide: ['x', 'X'],
+
                 nextFragment: ['ArrowRight', 'ArrowDown'],
                 previousFragment: ['ArrowLeft', 'ArrowUp']
             },
@@ -105,7 +109,7 @@ function Presentr(opt = {}) {
         _keyboardInput(e) {
             const match = cv => cv === e.code || cv === e.key;
             const {shortcuts} = that.options;
-            const fns = ['nextSlide', 'previousSlide', 'nextFragment', 'previousFragment']; // Available shortcuts
+            const fns = ['nextSlide', 'previousSlide', 'lastSlide', 'firstSlide', 'nextFragment', 'previousFragment']; // Available shortcuts
 
             // Find corresponding shortcut action
             const target = Object.keys(shortcuts).find(v => {
@@ -117,6 +121,8 @@ function Presentr(opt = {}) {
             target && fns.includes(target) && that[target]();
         },
 
+        firstSlide: () => that.jumpSlide(0),
+        lastSlide: () => that.jumpSlide(that._slides.length - 1),
         nextSlide: () => that.jumpSlide(that._slideIndex + 1),
         previousSlide: () => that.jumpSlide(that._slideIndex - 1),
         jumpSlide(index) {
