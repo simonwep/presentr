@@ -10,16 +10,20 @@ function Presentr(opt = {}) {
         // Assign default options
         options: _.applyDeep({
 
+            // Query selectors
             slides: '.presentr .slides > section',
             fragments: '.frag',
 
+            // CSS classes
             activeSlideClass: 'active',
             currentSlideClass: 'current-slide',
             activeFragmentClass: 'active',
             currentFragmentClass: 'current-frag',
 
+            // Start index
             slideIndex: 0,
 
+            // Keyboard shortcuts
             shortcuts: {
                 nextSlide: ['d', 'D'],
                 previousSlide: ['a', 'A'],
@@ -31,6 +35,7 @@ function Presentr(opt = {}) {
                 previousFragment: ['ArrowLeft', 'ArrowUp']
             },
 
+            // Event listeners
             onSlide: () => 0,
             onFragment: () => 0,
             onAction: () => 0
@@ -88,10 +93,12 @@ function Presentr(opt = {}) {
                 // Pre-calculations cause slides and fragments starts at one, not zero.
                 const presentr = that;
 
+                // State slide stuff
                 const slideIndex = that._slideIndex;
                 const slides = that._slides.length - 1;
                 const slidePercent = slides === 0 ? 0 : slideIndex / slides;
 
+                // State fragments stuff
                 const fragmentIndex = that._fragmentIndex;
                 const fragments = that._fragments[slideIndex].length;
                 const fragmentPercent = fragments === 0 ? 0 : fragmentIndex / fragments;
@@ -117,7 +124,7 @@ function Presentr(opt = {}) {
                 return Array.isArray(code) ? code.find(match) : match(code);
             });
 
-            // Check shortcut and execute
+            // Check shortcut was found and execute function
             target && fns.includes(target) && that[target]();
         },
 
@@ -145,7 +152,9 @@ function Presentr(opt = {}) {
             }
 
             // Update fragment index
-            that._fragmentIndex = that._fragments[index].reduce((ac, cv, ci) => cv.classList.contains(that.options.activeFragmentClass) ? ci + 1 : ac, 0);
+            that._fragmentIndex = that._fragments[index].reduce(
+                (ac, cv, ci) => cv.classList.contains(that.options.activeFragmentClass) ? ci + 1 : ac, 0
+            );
 
             // Fire event
             that._fireEvent('onSlide');
@@ -182,11 +191,13 @@ function Presentr(opt = {}) {
         destroy: () => window.removeEventListener('keyup', that._keyboardInput)
     };
 
+    // Init and return factory object
     that._init();
     return that;
 }
 
+// Export function to indentify production-version
 Presentr.version = '0.0.1';
 
-// Export factory funcion
+// Export factory function
 module.exports = Presentr;
