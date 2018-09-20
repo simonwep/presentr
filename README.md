@@ -19,7 +19,7 @@
      alt="Build Status"
      src="https://travis-ci.org/Simonwep/presentr.svg?branch=master"></a>
   <img alt="Current version"
-       src="https://img.shields.io/badge/version-0.0.1-e644ff.svg">
+       src="https://img.shields.io/badge/version-0.0.2-e644ff.svg">
   <a href="https://www.patreon.com/simonwep"><img
      alt="Support me"
      src="https://img.shields.io/badge/patreon-support-a444ff.svg"></a>
@@ -35,10 +35,10 @@
 * Hackable / Extensible
 * Ultra small, only 1.8 kB gzipped
 
-Why another library to provide the ability to create a presentation in your browser? 
-Isn't there already Revealjs which is good and reliable? 
-Yeah, thought the same. But I was looking for a library which I can use in combination with React, Vue, Bootstrap, Materialize or whatever library I want. 
-Something which only provides the essential functionalities like slides and fragments. 
+Why another library to provide the ability to create a presentation in your browser?
+Isn't there already Revealjs which is good and reliable?
+Yeah, thought the same. But I was looking for a library which I can use in combination with React, Vue, Bootstrap, Materialize or whatever library I want.
+Something which only provides the essential functionalities like slides and fragments.
 So I've decided to write an absolutly basic, simple but functional library to provide these things.
 
 ## Setup
@@ -101,11 +101,15 @@ const presentr = new Presentr({
 
     // Keyboard shortcuts.
     shortcuts: {
-        
+
         // Jump to next / previous slide
         nextSlide: ['d', 'D'],
         previousSlide: ['a', 'A'],
-        
+
+        // Jump to first / last slide
+        firstSlide: ['y', 'Y'],
+        lastSlide: ['x', 'X'],
+
         // Jumpt to next / previous fragement. If the first or last fragment is reached,
         // the next action would jump to the next / previous slide.
         nextFragment: ['ArrowRight', 'ArrowDown'],
@@ -138,6 +142,8 @@ const presentr = new Presentr({
 ## Methods
 * presentr.nextSlide() _- Jump to next slide._
 * presentr.previousSlide() _- Jump to previous slide._
+* presentr.firstSlide() _- Jump to first slide._
+* presentr.lastSlide() _- Jump to last slide._
 * presentr.jumpSlide(index`:Number`) _- Jump to a specific slide._
 * presentr.nextFragment() _- Jump to next fragment, if end reached the next slide will be shown._
 * presentr.previousFragment() _- Jump to previous fragment, if start reached the previous slide will be shown._
