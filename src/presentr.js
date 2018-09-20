@@ -183,9 +183,11 @@ function Presentr(opt = {}) {
 
             // Fire event
             that._fireEvent('onFragment');
-
             return true;
         },
+
+        getCurrentSlideIndex: () => that._slideIndex,
+        getCurrentFragmentIndex: () => that._fragmentIndex,
 
         // Remove shortcuts
         destroy: () => window.removeEventListener('keyup', that._keyboardInput)
