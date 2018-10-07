@@ -36,6 +36,7 @@ function Presentr(opt = {}) {
             },
 
             // Event listeners
+            onInit: () => 0,
             onSlide: () => 0,
             onFragment: () => 0,
             onAction: () => 0
@@ -81,6 +82,9 @@ function Presentr(opt = {}) {
             // Trigger
             that.jumpSlide(that.options.slideIndex);
             that._initActive = false;
+
+            // Fire init event
+            that._fireEvent('onInit')
         },
 
         // Helper function to fire events
