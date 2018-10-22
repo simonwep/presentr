@@ -1,6 +1,6 @@
 {
     "name": "@simonwep/presentr",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "description": "Minimalistic and extensible javascript presentation-library.",
     "main": "./dist/presentr.min.js",
     "scripts": {

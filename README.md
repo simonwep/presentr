@@ -19,7 +19,7 @@
      alt="Build Status"
      src="https://travis-ci.org/Simonwep/presentr.svg?branch=master"></a>
   <img alt="Current version"
-       src="https://img.shields.io/badge/version-0.0.2-e644ff.svg">
+       src="https://img.shields.io/badge/version-0.0.3-e644ff.svg">
   <a href="https://www.patreon.com/simonwep"><img
      alt="Support me"
      src="https://img.shields.io/badge/patreon-support-a444ff.svg"></a>
@@ -134,6 +134,11 @@ const presentr = new Presentr({
 
     // Will be called on every slide or fragment change.
     onAction(state) {
+        // Same as onSlide
+    },
+
+    // Initialization event, will be called on first initialization of presenter.
+    onInit(state) {
         // Same as onSlide
     }
 });
