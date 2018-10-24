@@ -14,6 +14,9 @@ function Presentr(opt = {}) {
             slides: '.presentr .slides > section',
             fragments: '.frag',
 
+            // CSS Group prefix
+            groupPrefix: 'g-',
+
             // CSS classes
             activeSlideClass: 'active',
             currentSlideClass: 'current-slide',
@@ -57,7 +60,34 @@ function Presentr(opt = {}) {
 
             // Fragments stuff
             that._fragmentIndex = 0;
-            that._fragments = that._slides.map(s => queryAll(that.options.fragments, s));
+
+            // Resolve groups
+            const {groupPrefix} = that.options;
+            that._fragments = that._slides.map(s => {
+                const groups = {};
+                const frags = [];
+                const fg = queryAll(that.options.fragments, s);
+
+                // Cluster elements which are grouped
+                for (let i = 0, f, n = fg.length; f = fg[i], i < n; i++) {
+                    const group = Array.from(f.classList).find(v => v.startsWith(groupPrefix));
+
+                    if (group) {
+
+                        if (group in groups) {
+                            frags[groups[group]].push(f);
+                        } else {
+                            groups[group] = i;
+                            frags.push([f]);
+                        }
+
+                    } else {
+                        frags.push([f]);
+                    }
+                }
+
+                return frags;
+            });
 
             // Inject styles
             _.css(that._presentrRoot, {'overflow': 'hidden'});
@@ -84,7 +114,7 @@ function Presentr(opt = {}) {
             that._initActive = false;
 
             // Fire init event
-            that._fireEvent('onInit')
+            that._fireEvent('onInit');
         },
 
         // Helper function to fire events
@@ -156,9 +186,8 @@ function Presentr(opt = {}) {
             }
 
             // Update fragment index
-            that._fragmentIndex = that._fragments[index].reduce(
-                (ac, cv, ci) => cv.classList.contains(that.options.activeFragmentClass) ? ci + 1 : ac, 0
-            );
+            that._fragmentIndex = that._fragments[index].reduce((ac, groups, ci) =>
+                groups.find(el => el.classList.contains(that.options.activeFragmentClass)) ? ci + 1 : ac, 0);
 
             // Fire event
             that._fireEvent('onSlide');
@@ -180,9 +209,15 @@ function Presentr(opt = {}) {
 
             // Apply class for previous and current fragment(s)
             that._fragmentIndex = index;
-            for (let i = 0, cl, n = fragments.length; i < n && (cl = fragments[i].classList); i++) {
-                cl[i < index ? 'add' : 'remove'](that.options.activeFragmentClass);
-                cl[i === index - 1 ? 'add' : 'remove'](that.options.currentFragmentClass);
+            for (let i = 0, group, n = fragments.length; i < n && (group = fragments[i]); i++) {
+                const afcAction = i < index ? 'add' : 'remove';
+                const cfcAction = i === index - 1 ? 'add' : 'remove';
+
+                // Apply classes to groups
+                for (let j = 0, cl, n = group.length; j < n && (cl = group[j].classList); j++) {
+                    cl[afcAction](that.options.activeFragmentClass);
+                    cl[cfcAction](that.options.currentFragmentClass);
+                }
             }
 
             // Fire event
