@@ -19,7 +19,7 @@
      alt="Build Status"
      src="https://travis-ci.org/Simonwep/presentr.svg?branch=master"></a>
   <img alt="Current version"
-       src="https://img.shields.io/badge/version-0.0.3-e644ff.svg">
+       src="https://img.shields.io/badge/version-0.0.4-e644ff.svg">
   <a href="https://www.patreon.com/simonwep"><img
      alt="Support me"
      src="https://img.shields.io/badge/patreon-support-a444ff.svg"></a>
@@ -95,6 +95,14 @@ const presentr = new Presentr({
     // Same functionality, but for fragments.
     activeFragmentClass: 'active',
     currentFragmentClass: 'current-frag',
+    
+    /**
+     *  Can be used to group fragments.
+     *  Eg. Apply to multiple elements 'g-a' and they will 
+     *  all get active until the first element wich this group 
+     *  has been reached.
+     */
+    groupPrefix: 'g-',
 
     // Start index. Does not change the slide sequence.
     slideIndex: 0,

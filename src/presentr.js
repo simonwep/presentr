@@ -238,7 +238,7 @@ function Presentr(opt = {}) {
 }
 
 // Export function to indentify production-version
-Presentr.version = '0.0.3';
+Presentr.version = '0.0.4';
 
 // Export factory function
 module.exports = Presentr;
