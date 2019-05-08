@@ -1,4 +1,5 @@
-const UglifyJs = require('uglifyjs-webpack-plugin');
+const {version} = require('./package');
+const webpack = require('webpack');
 
 module.exports = {
 
@@ -29,17 +30,8 @@ module.exports = {
     },
 
     plugins: [
-        new UglifyJs({
-            uglifyOptions: {
-                output: {
-                    comments: false
-                },
-                mangle: {
-                    properties: {
-                        regex: /^_/
-                    }
-                }
-            }
+        new webpack.BannerPlugin({
+            banner: `Presentr ${version} MIT | https://github.com/Simonwep/presentr`
         })
     ]
 };
