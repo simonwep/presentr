@@ -12,7 +12,7 @@ body {
 
 .presentr {
     font-family: 'Montserrat';
-    font-size: 1vw;
+    font-size: 1vmax;
 }
 
 .presentr .progress {
@@ -201,5 +201,11 @@ body {
     to {
         transform: none;
         opacity: 1;
+    }
+}
+
+@media screen and (max-width: 1000px) {
+    .slides section  {
+        padding: 0 2em;
     }
 }
