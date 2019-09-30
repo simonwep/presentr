@@ -7,6 +7,7 @@
 }
 
 body {
+    overflow: hidden;
 }
 
 .presentr {
@@ -25,65 +26,86 @@ body {
     transition: all 1s;
 }
 
-.presentr .slides {
+.slides {
     transition: all 0.6s;
 }
 
-.presentr .slides section {
+.slides section {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s;
     filter: grayscale(100%);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
 }
 
-.presentr .slides section h2 {
+.slides section.next-slide {
+    transform: translateX(100vw);
+    transition: all 0.3s;
+}
+
+.slides section.current-slide {
+    transition: all 0.3s;
+    filter: none;
+    transform: none;
+}
+
+.slides section.previous-slide {
+    transition: all 0.3s;
+    filter: none;
+    transform: translateX(-100vw);
+}
+
+.slides section h2 {
     font-family: 'Satisfy';
     font-size: 8em;
     color: #ff4446;
     margin-bottom: 5vh;
 }
 
-.presentr .slides section h2,
-.presentr .slides section.welcome h1 {
+.slides section h2,
+.slides section.welcome h1 {
     text-shadow: 2px 2px 0 #862224;
 }
 
-.presentr .slides section.welcome .keyboard-shortcuts {
+.slides section.welcome .keyboard-shortcuts {
     text-align: center;
     color: rgba(0, 0, 0, 0.75);
     font-size: 1.3em;
 }
 
-.presentr .slides section.welcome .keyboard-shortcuts p {
+.slides section.welcome .keyboard-shortcuts p {
     transform: translateY(-0.5vh);
     opacity: 0;
     margin: 0.3em 0;
     animation: normalize 0.7s ease forwards;
 }
 
-.presentr .slides section.welcome .keyboard-shortcuts p:nth-child(2) {
+.slides section.welcome .keyboard-shortcuts p:nth-child(2) {
     animation-delay: 0.5s;
 }
 
-.presentr .slides section.welcome .keyboard-shortcuts b {
+.slides section.welcome .keyboard-shortcuts b {
     font-weight: 600;
 }
 
-.presentr .slides section.welcome h1 {
+.slides section.welcome h1 {
     font-family: 'Satisfy';
     font-size: 10em;
     color: #ff4446;
 }
 
-.presentr .slides section.features .list {
+.slides section.features .list {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.presentr .slides section.features .list p {
+.slides section.features .list p {
     color: rgba(0, 0, 0, 0.85);
     display: inline-block;
     position: relative;
@@ -93,7 +115,7 @@ body {
     text-align: center;
 }
 
-.presentr .slides section.features .list p::before {
+.slides section.features .list p::before {
     position: absolute;
     content: '';
     bottom: -0.2em;
@@ -107,42 +129,42 @@ body {
     z-index: -1;
 }
 
-.presentr .slides section.features .list p.current-frag {
+.slides section.features .list p.current-frag {
     color: white;
 }
 
-.presentr .slides section.features .list p.current-frag::before {
+.slides section.features .list p.current-frag::before {
     width: 100%;
 }
 
-.presentr .slides section.setup .methods {
+.slides section.setup .methods {
     display: flex;
     flex-direction: column;
 }
 
-.presentr .slides section.setup .methods .method {
+.slides section.setup .methods .method {
     margin-bottom: 3em;
 }
 
-.presentr .slides section.setup .methods .method h3 {
+.slides section.setup .methods .method h3 {
     font-size: 1.5em;
     font-weight: 400;
     margin-bottom: 0.8em;
     color: rgba(0, 0, 0, 0.85);
 }
 
-.presentr .slides section.setup .methods .method code {
+.slides section.setup .methods .method code {
     background: #f6f8fa;
     padding: 0.8em 1.2em;
     transition: all 0.5s;
     border-bottom: 2px solid #f6f8fa;
 }
 
-.presentr .slides section.setup .methods .method.current-frag code {
+.slides section.setup .methods .method.current-frag code {
     border-bottom: 2px solid #ff4446;
 }
 
-.presentr .slides section.gh a {
+.slides section.github a {
     cursor: pointer;
     outline: none;
     text-decoration: none;
@@ -155,22 +177,22 @@ body {
     transition: all 0.3s;
 }
 
-.presentr .slides section.gh a:hover {
+.slides section.github a:hover {
     background: #d73b3d;
 }
 
-.presentr .slides section.current-slide {
+.slides section.current-slide {
     transform: none;
     filter: none;
 }
 
-.presentr .slides .frag {
+.slides .frag {
     opacity: 0;
     transform: translateY(-0.5vh);
     transition: all 0.5s;
 }
 
-.presentr .slides .frag.active {
+.slides .frag.active-frag {
     transform: none;
     opacity: 1;
 }

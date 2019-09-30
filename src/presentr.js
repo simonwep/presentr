@@ -1,6 +1,3 @@
-'use strict';
-
-// Utils
 import * as _ from './lib/utils';
 
 function Presentr(opt = {}) {
@@ -18,9 +15,10 @@ function Presentr(opt = {}) {
             groupPrefix: 'g-',
 
             // CSS classes
-            activeSlideClass: 'active',
+            previousSlideClass: 'previous-slide',
+            nextSlideClass: 'next-slide',
             currentSlideClass: 'current-slide',
-            activeFragmentClass: 'active',
+            activeFragmentClass: 'active-grag',
             currentFragmentClass: 'current-frag',
 
             // Start index
@@ -53,10 +51,8 @@ function Presentr(opt = {}) {
             const queryAll = (query, base) => Array.from(base.querySelectorAll(query));
 
             // Slides stuff
-            that._slideIndex = 0;
+            that._slideIndex = null;
             that._slides = queryAll(that.options.slides, document);
-            that._presentrSlides = that._slides[0].parentElement;
-            that._presentrRoot = that._presentrSlides.parentElement;
 
             // Fragments stuff
             that._fragmentIndex = 0;
@@ -87,23 +83,6 @@ function Presentr(opt = {}) {
                 }
 
                 return frags;
-            });
-
-            // Inject styles
-            _.css(that._presentrRoot, {'overflow': 'hidden'});
-            _.css(that._presentrSlides, {
-                'position': 'fixed',
-                'display': 'flex',
-                'top': '0',
-                'left': '0',
-                'width': '100vw',
-                'height': '100vh'
-            });
-
-            _.css(that.options.slides, {
-                'flex-shrink': '0',
-                'width': '100vw',
-                'height': '100vh'
             });
 
             // Bind shortcuts
@@ -167,31 +146,40 @@ function Presentr(opt = {}) {
         nextSlide: () => that.jumpSlide(that._slideIndex + 1),
         previousSlide: () => that.jumpSlide(that._slideIndex - 1),
         jumpSlide(index) {
+            const {_slides, _fragments, options} = this;
 
             // Validate
-            if (index < 0 || index >= that._slides.length) {
+            if (index < 0 || index >= _slides.length) {
                 return false;
+            }
+
+            for (let i = 0; i < _slides.length; i++) {
+                const classl = _slides[i].classList;
+
+                if (i === index) {
+                    classl.add(options.currentSlideClass);
+                    classl.remove(options.previousSlideClass);
+                    classl.remove(options.nextSlideClass);
+                } else if (i < index) {
+                    classl.remove(options.currentSlideClass);
+                    classl.add(options.previousSlideClass);
+                } else if (i > index) {
+                    classl.remove(options.currentSlideClass);
+                    classl.add(options.nextSlideClass);
+                }
             }
 
             // Apply index
             that._slideIndex = index;
 
-            // Update offset
-            that._presentrSlides.style.left = `-${index * 100}vw`;
-
-            // Apply class for previous and current slide(s)
-            for (let i = 0, cl, n = that._slides.length; i < n && (cl = that._slides[i].classList); i++) {
-                cl[i <= index ? 'add' : 'remove'](that.options.activeSlideClass);
-                cl[i === index ? 'add' : 'remove'](that.options.currentSlideClass);
-            }
-
             // Update fragment index
-            that._fragmentIndex = that._fragments[index].reduce((ac, groups, ci) =>
-                groups.find(el => el.classList.contains(that.options.activeFragmentClass)) ? ci + 1 : ac, 0);
+            that._fragmentIndex = _fragments[index].reduce((ac, groups, ci) => {
+                const containsActiveFragment = groups.find(el => el.classList.contains(options.activeFragmentClass));
+                return containsActiveFragment ? ci + 1 : ac;
+            }, 0);
 
             // Fire event
             that._fireEvent('onSlide');
-
             return true;
         },
 

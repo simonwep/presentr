@@ -86,14 +86,17 @@ const presentr = new Presentr({
     // Query selector for each fragment of the presentaion.
     fragments: '.frag',
 
-    // Class which will be added to the current and previous slides.
-    activeSlideClass: 'active',
+    // Class for slides behind the current one
+    previousSlideClass: 'active-slide',
+
+    // Class for slides after the current one
+    nextSlideClass: 'next-slide',
 
     // Class which will be added only to the current slide.
     currentSlideClass: 'current-slide',
 
     // Same functionality, but for fragments.
-    activeFragmentClass: 'active',
+    activeFragmentClass: 'active-frag',
     currentFragmentClass: 'current-frag',
     
     /**
@@ -126,13 +129,13 @@ const presentr = new Presentr({
 
     // Will be called on every slide change.
     onSlide(state) {
-        state.presentr,        // Current instance
-        state.slideIndex,      // Current slide index
-        state.slides,          // Slides as HTMLElements (Array)
-        state.slidePercent,    // Decimal percent value of how much of your slides are over
-        state.fragmentIndex,   // Current fragment index
-        state.fragments,       // Fragments as array in an array which index is the slide index
-        state.fragmentPercent  // Same as slidePercent but for fragments on the current slide
+        state.presentr;        // Current instance
+        state.slideIndex;      // Current slide index
+        state.slides;          // Slides as HTMLElements (Array)
+        state.slidePercent;    // Decimal percent value of how much of your slides are over
+        state.fragmentIndex;   // Current fragment index
+        state.fragments;       // Fragments as array in an array which index is the slide index
+        state.fragmentPercent;  // Same as slidePercent but for fragments on the current slide
     },
 
     // Will be called on every fragment change.
