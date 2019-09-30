@@ -3,9 +3,12 @@
     "version": "0.0.4",
     "description": "Minimalistic and extensible javascript presentation-library.",
     "main": "./dist/presentr.min.js",
+    "author": "Simon Reinisch",
+    "license": "MIT",
     "scripts": {
-        "build": "webpack --mode production",
-        "dev": "webpack-dev-server --mode development"
+        "build": "webpack --mode production --config webpack.config.prod.js",
+        "dev": "webpack-dev-server --mode development --config webpack.config.dev.js",
+        "lint": "eslint ./src --fix"
     },
     "keywords": [
         "presentations",
@@ -14,13 +17,13 @@
         "slides",
         "slideshow"
     ],
-    "author": "Simon Reinisch",
-    "license": "MIT",
-    "dependencies": {},
     "devDependencies": {
         "@babel/core": "^7.6.2",
         "@babel/preset-env": "^7.6.2",
         "babel-loader": "^8.0.6",
+        "eslint": "^6.5.0",
+        "eslint-config-problems": "^3.0.1",
+        "eslint-loader": "^3.0.2",
         "webpack": "^4.41.0",
         "webpack-cli": "^3.3.9",
         "webpack-dev-server": "^3.8.1"

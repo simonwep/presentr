@@ -2,29 +2,24 @@ const {version} = require('./package');
 const webpack = require('webpack');
 
 module.exports = {
-
     entry: './src/presentr.js',
 
     output: {
-        path: __dirname + '/dist',
-        publicPath: '/dist/',
+        path:`${__dirname}/dist`,
         filename: 'presentr.min.js',
         library: 'Presentr',
+        libraryExport: 'default',
         libraryTarget: 'umd'
-    },
-
-    devServer: {
-        contentBase: __dirname + '/',
-        host: '0.0.0.0',
-        port: 3003
     },
 
     module: {
         rules: [
             {
                 test: /\.js$/,
-                exclude: /(node_modules|bower_components)/,
-                loader: 'babel-loader'
+                loader: [
+                    'babel-loader',
+                    'eslint-loader'
+                ]
             }
         ]
     },

@@ -1,0 +1,19 @@
+{
+    "extends": [
+        "eslint:recommended",
+        "problems"
+    ],
+    "env": {
+        "browser": true
+    },
+    "parserOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module"
+    },
+    "rules": {
+        "no-cond-assign": "off",
+        "no-console": "error",
+        "keyword-spacing": "warn",
+        "eqeqeq": "error"
+    }
+}

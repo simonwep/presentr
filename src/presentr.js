@@ -1,11 +1,11 @@
-import * as _ from './lib/utils';
+import assignDeep from './utils/assignDeep';
 
 function Presentr(opt = {}) {
 
     const that = {
 
         // Assign default options
-        options: _.applyDeep({
+        options: assignDeep({
 
             // Query selectors
             slides: '.presentr .slides > section',
@@ -65,20 +65,21 @@ function Presentr(opt = {}) {
                 const fg = queryAll(that.options.fragments, s);
 
                 // Cluster elements which are grouped
-                for (let i = 0, f, n = fg.length; f = fg[i], i < n; i++) {
-                    const group = Array.from(f.classList).find(v => v.startsWith(groupPrefix));
+                for (let i = 0, n = fg.length; i < n; i++) {
+                    const fragment = fg[i];
+                    const group = Array.from(fragment.classList).find(v => v.startsWith(groupPrefix));
 
                     if (group) {
 
                         if (group in groups) {
-                            frags[groups[group]].push(f);
+                            frags[groups[group]].push(fragment);
                         } else {
                             groups[group] = i;
-                            frags.push([f]);
+                            frags.push([fragment]);
                         }
 
                     } else {
-                        frags.push([f]);
+                        frags.push([fragment]);
                     }
                 }
 
@@ -229,4 +230,4 @@ function Presentr(opt = {}) {
 Presentr.version = '0.0.4';
 
 // Export factory function
-module.exports = Presentr;
+export default Presentr;
