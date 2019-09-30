@@ -18,7 +18,7 @@ function Presentr(opt = {}) {
             previousSlideClass: 'previous-slide',
             nextSlideClass: 'next-slide',
             currentSlideClass: 'current-slide',
-            activeFragmentClass: 'active-grag',
+            activeFragmentClass: 'active-frag',
             currentFragmentClass: 'current-frag',
 
             // Start index
@@ -65,7 +65,7 @@ function Presentr(opt = {}) {
                 const fg = queryAll(that.options.fragments, s);
 
                 // Cluster elements which are grouped
-                for (let i = 0, n = fg.length; i < n; i++) {
+                for (let i = 0; i < fg.length; i++) {
                     const fragment = fg[i];
                     const group = Array.from(fragment.classList).find(v => v.startsWith(groupPrefix));
 
@@ -94,11 +94,11 @@ function Presentr(opt = {}) {
             that._initActive = false;
 
             // Fire init event
-            that._fireEvent('onInit');
+            that._emit('onInit');
         },
 
         // Helper function to fire events
-        _fireEvent(name) {
+        _emit(name) {
             const fn = that.options[name];
 
             // Check if presentr is currently in initialization mode and cb is a function
@@ -180,7 +180,7 @@ function Presentr(opt = {}) {
             }, 0);
 
             // Fire event
-            that._fireEvent('onSlide');
+            that._emit('onSlide');
             return true;
         },
 
@@ -210,15 +210,22 @@ function Presentr(opt = {}) {
             }
 
             // Fire event
-            that._fireEvent('onFragment');
+            that._emit('onFragment');
             return true;
         },
 
-        getCurrentSlideIndex: () => that._slideIndex,
-        getCurrentFragmentIndex: () => that._fragmentIndex,
-
         // Remove shortcuts
-        destroy: () => window.removeEventListener('keyup', that._keyboardInput)
+        destroy() {
+            window.removeEventListener('keyup', that._keyboardInput);
+        },
+
+        get slideIndex() {
+            return that._slideIndex;
+        },
+
+        get fragmentIndex() {
+            return that._fragmentIndex;
+        }
     };
 
     // Init and return factory object

@@ -6,34 +6,34 @@
     Minimalistic, Hackable, Fast Presentation Library.
 </h3>
 
+
 <p align="center">
-  <a href="https://choosealicense.com/licenses/mit/"><img
-	 alt="License MIT"
-	 src="https://img.shields.io/badge/licence-MIT-44a7ff.svg"></a>
-  <a href="https://webpack.js.org/"><img
-     alt="Webpack"
-     src="https://img.shields.io/badge/Webpack-4-44d6ff.svg"></a>
-  <img alt="No dependencies"
-       src="https://img.shields.io/badge/dependencies-none-3de5cb.svg">
+  <img alt="gzip size" src="https://img.badgesize.io/https://raw.githubusercontent.com/Simonwep/presentr/master/dist/presentr.min.js?compression=gzip&style=flat-square">
+  <img alt="brotli size" src="https://img.badgesize.io/https://raw.githubusercontent.com/Simonwep/presentr/master/dist/presentr.min.js?compression=brotli&style=flat-square">
   <a href="https://travis-ci.org/Simonwep/presentr"><img
      alt="Build Status"
-     src="https://travis-ci.org/Simonwep/presentr.svg?branch=master"></a>
+     src="https://img.shields.io/travis/Simonwep/presentr.svg?style=popout-square"></a>
+  <a href="https://www.npmjs.com/package/@simonwep/presentr"><img
+     alt="Download count"
+     src="https://img.shields.io/npm/dm/@simonwep/presentr.svg?style=popout-square"></a>
+  <img alt="No dependencies" src="https://img.shields.io/badge/dependencies-none-27ae60.svg?style=popout-square">
+  <a href="https://www.jsdelivr.com/package/npm/@simonwep/presentr"><img
+     alt="JSDelivr download count"
+     src="https://data.jsdelivr.com/v1/package/npm/@simonwep/presentr/badge"></a>
   <img alt="Current version"
-       src="https://img.shields.io/badge/version-0.0.4-e644ff.svg">
+       src="https://img.shields.io/github/tag/Simonwep/presentr.svg?color=3498DB&label=version&style=flat-square">
   <a href="https://www.patreon.com/simonwep"><img
      alt="Support me"
-     src="https://img.shields.io/badge/patreon-support-a444ff.svg"></a>
+     src="https://img.shields.io/badge/patreon-support-3498DB.svg?style=popout-square"></a>
 </p>
-
 
 <br>
 
 ### Features
-* Simple usage
 * No jQuery
 * No dependencies
 * Hackable / Extensible
-* Ultra small, only 1.8 kB gzipped
+* Ultra small
 
 Why another library to provide the ability to create a presentation in your browser?
 Isn't there already Revealjs which is good and reliable?
