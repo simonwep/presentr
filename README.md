@@ -34,6 +34,7 @@
 * No dependencies
 * Hackable / Extensible
 * Ultra small
+* Native mobile-support
 
 Why another library to provide the ability to create a presentation in your browser?
 Isn't there already Revealjs which is good and reliable?
@@ -70,9 +71,8 @@ Directly:
 ```javascript
 // Simple example, see optional options for more configuration.
 const presentr = new Presentr({
-
-    // Selector for each slide
-    slides: '.presentr .slides > section'
+    slides: '.slide',
+    fragments: '.frag'
 });
 ```
 
@@ -81,7 +81,7 @@ const presentr = new Presentr({
 const presentr = new Presentr({
 
      // Query selector to your slides.
-    slides: '.presentr .slides > section',
+    slides: '.slide',
 
     // Query selector for each fragment of the presentaion.
     fragments: '.frag',
@@ -127,9 +127,8 @@ const presentr = new Presentr({
         previousFragment: ['ArrowLeft', 'ArrowUp']
     },
 
-    // Will be called on every slide change.
+    // Will be called on every slide change. The context will be the current presentr instance.
     onSlide(state) {
-        state.presentr;        // Current instance
         state.slideIndex;      // Current slide index
         state.slides;          // Slides as HTMLElements (Array)
         state.slidePercent;    // Decimal percent value of how much of your slides are over

@@ -1,4 +1,5 @@
 import assignDeep from './utils/assignDeep';
+import {off, on}  from './utils/eventListener';
 
 function Presentr(opt = {}) {
 
@@ -87,7 +88,31 @@ function Presentr(opt = {}) {
             });
 
             // Bind shortcuts
-            window.addEventListener('keyup', that._keyboardInput);
+            that._eventListeners = [
+
+                // Listen for key-events
+                on(window, 'keyup', e => {
+                    const match = cv => cv === e.code || cv === e.key;
+                    const {shortcuts} = that.options;
+                    const fns = ['nextSlide', 'previousSlide', 'lastSlide', 'firstSlide', 'nextFragment', 'previousFragment']; // Available shortcuts
+
+                    // Find corresponding shortcut action
+                    const target = Object.keys(shortcuts).find(v => {
+                        const code = shortcuts[v];
+                        return Array.isArray(code) ? code.find(match) : match(code);
+                    });
+
+                    // Check shortcut was found and execute function
+                    target && fns.includes(target) && that[target]();
+                }),
+
+                // Listen for touch-events
+                on(window, 'touchstart', e => {
+                    const x = e && e.touches && e.touches[0] && e.touches[0].clientX;
+                    const halfWidth = window.innerWidth / 2;
+                    x > halfWidth ? that.nextFragment() : that.previousFragment();
+                })
+            ];
 
             // Trigger
             that.jumpSlide(that.options.slideIndex);
@@ -104,9 +129,6 @@ function Presentr(opt = {}) {
             // Check if presentr is currently in initialization mode and cb is a function
             if (!that._initActive && typeof fn === 'function') {
 
-                // Pre-calculations cause slides and fragments starts at one, not zero.
-                const presentr = that;
-
                 // State slide stuff
                 const slideIndex = that._slideIndex;
                 const slides = that._slides.length - 1;
@@ -117,29 +139,20 @@ function Presentr(opt = {}) {
                 const fragments = that._fragments[slideIndex].length;
                 const fragmentPercent = fragments === 0 ? 0 : fragmentIndex / fragments;
 
-                const state = {presentr, slideIndex, slides, slidePercent, fragmentIndex, fragments, fragmentPercent};
+                const state = {
+                    slideIndex,
+                    slides, slidePercent,
+                    fragmentIndex,
+                    fragments,
+                    fragmentPercent
+                };
 
                 // Call event-listener
-                fn(state);
+                fn.call(that, state);
 
                 // Call action listener
                 that.options.onAction(state);
             }
-        },
-
-        _keyboardInput(e) {
-            const match = cv => cv === e.code || cv === e.key;
-            const {shortcuts} = that.options;
-            const fns = ['nextSlide', 'previousSlide', 'lastSlide', 'firstSlide', 'nextFragment', 'previousFragment']; // Available shortcuts
-
-            // Find corresponding shortcut action
-            const target = Object.keys(shortcuts).find(v => {
-                const code = shortcuts[v];
-                return Array.isArray(code) ? code.find(match) : match(code);
-            });
-
-            // Check shortcut was found and execute function
-            target && fns.includes(target) && that[target]();
         },
 
         firstSlide: () => that.jumpSlide(0),
@@ -214,9 +227,10 @@ function Presentr(opt = {}) {
             return true;
         },
 
-        // Remove shortcuts
         destroy() {
-            window.removeEventListener('keyup', that._keyboardInput);
+
+            // Unbind event-listeners
+            that._eventListeners.forEach(args => off(...args));
         },
 
         get slideIndex() {
