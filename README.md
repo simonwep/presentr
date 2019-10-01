@@ -39,8 +39,7 @@
 Why another library to provide the ability to create a presentation in your browser?
 Isn't there already Revealjs which is good and reliable?
 Yeah, thought the same. But I was looking for a library which I can use in combination with React, Vue, Bootstrap, Materialize or whatever library I want.
-Something which only provides the essential functionalities like slides and fragments.
-So I've decided to write an absolutly basic, simple but functional library to provide these things.
+Something which only provides the very essential functionalities to control slides and fragments.
 
 ## Setup
 
@@ -86,29 +85,29 @@ const presentr = new Presentr({
     // Query selector for each fragment of the presentaion.
     fragments: '.frag',
 
-    // Class for slides behind the current one
-    previousSlideClass: 'active-slide',
-
-    // Class for slides after the current one
-    nextSlideClass: 'next-slide',
-
-    // Class which will be added only to the current slide.
-    currentSlideClass: 'current-slide',
-
-    // Same functionality, but for fragments.
-    activeFragmentClass: 'active-frag',
-    currentFragmentClass: 'current-frag',
-    
     /**
      *  Can be used to group fragments.
-     *  Eg. Apply to multiple elements 'g-a' and they will 
+     *  Apply to multiple elements 'g-a' and they will 
      *  all get active until the first element wich this group 
      *  has been reached.
      */
-    groupPrefix: 'g-',
+    fragmentGroupPrefix: 'g-',
 
     // Start index. Does not change the slide sequence.
     slideIndex: 0,
+
+
+    // CSS Classes to get control the appereance of slides and fragments
+    classes: {
+        previousSlide: 'previous-slide', // Class for slides behind the current one
+        nextSlide: 'next-slide',         // Class for slides after the current one
+        currentSlide: 'current-slide',   // Class which will be added only to the current slide.
+
+        // Same functionality, just for fragments.
+        activeFragment: 'active-frag',
+        currentFragment: 'current-frag'
+    },
+
 
     // Keyboard shortcuts.
     shortcuts: {

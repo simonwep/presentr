@@ -13,17 +13,19 @@ function Presentr(opt = {}) {
             fragments: '.frag',
 
             // CSS Group prefix
-            groupPrefix: 'g-',
-
-            // CSS classes
-            previousSlideClass: 'previous-slide',
-            nextSlideClass: 'next-slide',
-            currentSlideClass: 'current-slide',
-            activeFragmentClass: 'active-frag',
-            currentFragmentClass: 'current-frag',
+            fragmentGroupPrefix: 'g-',
 
             // Start index
             slideIndex: 0,
+
+            // CSS classes
+            classes: {
+                previousSlide: 'previous-slide',
+                nextSlide: 'next-slide',
+                currentSlide: 'current-slide',
+                activeFragment: 'active-frag',
+                currentFragment: 'current-frag'
+            },
 
             // Keyboard shortcuts
             shortcuts: {
@@ -59,7 +61,7 @@ function Presentr(opt = {}) {
             that._fragmentIndex = 0;
 
             // Resolve groups
-            const {groupPrefix} = that.options;
+            const {fragmentGroupPrefix} = that.options;
             that._fragments = that._slides.map(s => {
                 const groups = {};
                 const frags = [];
@@ -68,7 +70,7 @@ function Presentr(opt = {}) {
                 // Cluster elements which are grouped
                 for (let i = 0; i < fg.length; i++) {
                     const fragment = fg[i];
-                    const group = Array.from(fragment.classList).find(v => v.startsWith(groupPrefix));
+                    const group = Array.from(fragment.classList).find(v => v.startsWith(fragmentGroupPrefix));
 
                     if (group) {
 
@@ -160,26 +162,27 @@ function Presentr(opt = {}) {
         nextSlide: () => that.jumpSlide(that._slideIndex + 1),
         previousSlide: () => that.jumpSlide(that._slideIndex - 1),
         jumpSlide(index) {
-            const {_slides, _fragments, options} = this;
+            const {_slides, _fragments, options} = that;
 
             // Validate
             if (index < 0 || index >= _slides.length) {
                 return false;
             }
 
+            const {classes} = options;
             for (let i = 0; i < _slides.length; i++) {
                 const classl = _slides[i].classList;
 
                 if (i === index) {
-                    classl.add(options.currentSlideClass);
-                    classl.remove(options.previousSlideClass);
-                    classl.remove(options.nextSlideClass);
+                    classl.add(classes.currentSlide);
+                    classl.remove(classes.previousSlide);
+                    classl.remove(classes.nextSlide);
                 } else if (i < index) {
-                    classl.remove(options.currentSlideClass);
-                    classl.add(options.previousSlideClass);
+                    classl.remove(classes.currentSlide);
+                    classl.add(classes.previousSlide);
                 } else if (i > index) {
-                    classl.remove(options.currentSlideClass);
-                    classl.add(options.nextSlideClass);
+                    classl.remove(classes.currentSlide);
+                    classl.add(classes.nextSlide);
                 }
             }
 
@@ -188,7 +191,7 @@ function Presentr(opt = {}) {
 
             // Update fragment index
             that._fragmentIndex = _fragments[index].reduce((ac, groups, ci) => {
-                const containsActiveFragment = groups.find(el => el.classList.contains(options.activeFragmentClass));
+                const containsActiveFragment = groups.find(el => el.classList.contains(classes.activeFragment));
                 return containsActiveFragment ? ci + 1 : ac;
             }, 0);
 
@@ -211,14 +214,15 @@ function Presentr(opt = {}) {
 
             // Apply class for previous and current fragment(s)
             that._fragmentIndex = index;
+            const {activeFragment, currentFragment} = that.options.classes;
             for (let i = 0, group, n = fragments.length; i < n && (group = fragments[i]); i++) {
                 const afcAction = i < index ? 'add' : 'remove';
                 const cfcAction = i === index - 1 ? 'add' : 'remove';
 
                 // Apply classes to groups
                 for (let j = 0, cl, n = group.length; j < n && (cl = group[j].classList); j++) {
-                    cl[afcAction](that.options.activeFragmentClass);
-                    cl[cfcAction](that.options.currentFragmentClass);
+                    cl[afcAction](activeFragment);
+                    cl[cfcAction](currentFragment);
                 }
             }
 
