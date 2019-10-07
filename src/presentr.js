@@ -213,14 +213,18 @@ function Presentr(opt = {}) {
             // Apply class for previous and current fragment(s)
             that._fragmentIndex = index;
             const {activeFragment, currentFragment} = that.options.classes;
-            for (let i = 0, group, n = fragments.length; i < n && (group = fragments[i]); i++) {
-                const afcAction = i < index ? 'add' : 'remove';
-                const cfcAction = i === index - 1 ? 'add' : 'remove';
+            for (let i = 0, group; i < fragments.length && (group = fragments[i]); i++) {
+                const afAction = i < index ? 'add' : 'remove';
+                const cfAction = i === index - 1 ? 'add' : 'remove';
 
                 // Apply classes to groups
-                for (let j = 0, cl, n = group.length; j < n && (cl = group[j].classList); j++) {
-                    cl[afcAction](activeFragment);
-                    cl[cfcAction](currentFragment);
+                for (let j = 0, cl; j < group.length && (cl = group[j].classList); j++) {
+                    cl[afAction](activeFragment);
+
+                    // Prevent removing a class-name which got used for both active and current fragmentsl
+                    if (activeFragment !== currentFragment) {
+                        cl[cfAction](currentFragment);
+                    }
                 }
             }
 
