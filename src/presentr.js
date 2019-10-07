@@ -73,14 +73,12 @@ function Presentr(opt = {}) {
                     const group = Array.from(fragment.classList).find(v => v.startsWith(fragmentGroupPrefix));
 
                     if (group) {
-
                         if (group in groups) {
                             frags[groups[group]].push(fragment);
                         } else {
                             groups[group] = i;
                             frags.push([fragment]);
                         }
-
                     } else {
                         frags.push([fragment]);
                     }

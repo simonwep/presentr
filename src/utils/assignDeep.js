@@ -7,9 +7,11 @@
 export default function assignDeep(target = {}, source) {
 
     for (const [key, val] of Object.entries(source)) {
-        if (target[key] !== null && typeof target[key] === 'object') {
-            target[key] = assignDeep(val, target[key]);
-        } else {
+        const targetValue = target[key];
+
+        if (targetValue !== null && typeof targetValue === 'object') {
+            target[key] = assignDeep(targetValue, val);
+        } else if (typeof val !== 'undefined') {
             target[key] = val;
         }
     }
