@@ -68,19 +68,24 @@ function Presentr(opt = {}) {
                 const fg = queryAll(that.options.fragments, s);
 
                 // Cluster elements which are grouped
+                let gindex = 0; // Index ignoring the total amoun of fragments
                 for (let i = 0; i < fg.length; i++) {
                     const fragment = fg[i];
-                    const group = Array.from(fragment.classList).find(v => v.startsWith(fragmentGroupPrefix));
+                    const group = Array.from(fragment.classList)
+                        .find(v => v.startsWith(fragmentGroupPrefix));
 
                     if (group) {
                         if (group in groups) {
+
                             frags[groups[group]].push(fragment);
                         } else {
-                            groups[group] = i;
+                            groups[group] = gindex;
                             frags.push([fragment]);
+                            gindex++;
                         }
                     } else {
                         frags.push([fragment]);
+                        gindex++;
                     }
                 }
 
