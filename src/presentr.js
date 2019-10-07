@@ -1,12 +1,10 @@
 import assignDeep from './utils/assignDeep';
 import {off, on}  from './utils/eventListener';
 
-function Presentr(opt = {}) {
+class Presentr {
 
-    const that = {
-
-        // Assign default options
-        options: assignDeep({
+    constructor(opt = {}) {
+        this._options = assignDeep({
 
             // Query selectors
             slides: '.presentr .slides > section',
@@ -44,218 +42,228 @@ function Presentr(opt = {}) {
             onSlide: () => 0,
             onFragment: () => 0,
             onAction: () => 0
+        }, opt);
 
-        }, opt),
+        // Initialization state
+        this._initActive = true;
+        const queryAll = (query, base) => Array.from(base.querySelectorAll(query));
 
-        _init() {
+        // Slides stuff
+        this._slideIndex = null;
+        this._slides = queryAll(this._options.slides, document);
 
-            // Initialization state
-            that._initActive = true;
-            const queryAll = (query, base) => Array.from(base.querySelectorAll(query));
+        // Fragments stuff
+        this._fragmentIndex = 0;
 
-            // Slides stuff
-            that._slideIndex = null;
-            that._slides = queryAll(that.options.slides, document);
+        // Resolve groups
+        const {fragmentGroupPrefix} = this._options;
+        this._fragments = this._slides.map(s => {
+            const groups = {};
+            const frags = [];
+            const fg = queryAll(this._options.fragments, s);
 
-            // Fragments stuff
-            that._fragmentIndex = 0;
+            // Cluster elements which are grouped
+            let gindex = 0; // Index ignoring the total amoun of fragments
+            for (let i = 0; i < fg.length; i++) {
+                const fragment = fg[i];
+                const group = Array.from(fragment.classList)
+                    .find(v => v.startsWith(fragmentGroupPrefix));
 
-            // Resolve groups
-            const {fragmentGroupPrefix} = that.options;
-            that._fragments = that._slides.map(s => {
-                const groups = {};
-                const frags = [];
-                const fg = queryAll(that.options.fragments, s);
+                if (group) {
+                    if (group in groups) {
 
-                // Cluster elements which are grouped
-                let gindex = 0; // Index ignoring the total amoun of fragments
-                for (let i = 0; i < fg.length; i++) {
-                    const fragment = fg[i];
-                    const group = Array.from(fragment.classList)
-                        .find(v => v.startsWith(fragmentGroupPrefix));
-
-                    if (group) {
-                        if (group in groups) {
-
-                            frags[groups[group]].push(fragment);
-                        } else {
-                            groups[group] = gindex;
-                            frags.push([fragment]);
-                            gindex++;
-                        }
+                        frags[groups[group]].push(fragment);
                     } else {
+                        groups[group] = gindex;
                         frags.push([fragment]);
                         gindex++;
                     }
-                }
-
-                return frags;
-            });
-
-            // Bind shortcuts
-            that._eventListeners = [
-
-                // Listen for key-events
-                on(window, 'keyup', e => {
-                    const match = cv => cv === e.code || cv === e.key;
-                    const {shortcuts} = that.options;
-                    const fns = ['nextSlide', 'previousSlide', 'lastSlide', 'firstSlide', 'nextFragment', 'previousFragment']; // Available shortcuts
-
-                    // Find corresponding shortcut action
-                    const target = Object.keys(shortcuts).find(v => {
-                        const code = shortcuts[v];
-                        return Array.isArray(code) ? code.find(match) : match(code);
-                    });
-
-                    // Check shortcut was found and execute function
-                    target && fns.includes(target) && that[target]();
-                }),
-
-                // Listen for touch-events
-                on(window, 'touchstart', e => {
-                    const x = e && e.touches && e.touches[0] && e.touches[0].clientX;
-                    const halfWidth = window.innerWidth / 2;
-                    x > halfWidth ? that.nextFragment() : that.previousFragment();
-                })
-            ];
-
-            // Trigger
-            that.jumpSlide(that.options.slideIndex);
-            that._initActive = false;
-
-            // Fire init event
-            that._emit('onInit');
-        },
-
-        // Helper function to fire events
-        _emit(name) {
-            const fn = that.options[name];
-
-            // Check if presentr is currently in initialization mode and cb is a function
-            if (!that._initActive && typeof fn === 'function') {
-
-                // State slide stuff
-                const slideIndex = that._slideIndex;
-                const slides = that._slides.length - 1;
-                const slidePercent = slides === 0 ? 0 : slideIndex / slides;
-
-                // State fragments stuff
-                const fragmentIndex = that._fragmentIndex;
-                const fragments = that._fragments[slideIndex].length;
-                const fragmentPercent = fragments === 0 ? 0 : fragmentIndex / fragments;
-
-                const state = {
-                    slideIndex,
-                    slides, slidePercent,
-                    fragmentIndex,
-                    fragments,
-                    fragmentPercent
-                };
-
-                // Call event-listener
-                fn.call(that, state);
-
-                // Call action listener
-                that.options.onAction(state);
-            }
-        },
-
-        firstSlide: () => that.jumpSlide(0),
-        lastSlide: () => that.jumpSlide(that._slides.length - 1),
-        nextSlide: () => that.jumpSlide(that._slideIndex + 1),
-        previousSlide: () => that.jumpSlide(that._slideIndex - 1),
-        jumpSlide(index) {
-            const {_slides, _fragments, options} = that;
-
-            // Validate
-            if (index < 0 || index >= _slides.length) {
-                return false;
-            }
-
-            const {classes} = options;
-            for (let i = 0; i < _slides.length; i++) {
-                const classl = _slides[i].classList;
-
-                if (i === index) {
-                    classl.add(classes.currentSlide);
-                    classl.remove(classes.previousSlide);
-                    classl.remove(classes.nextSlide);
-                } else if (i < index) {
-                    classl.remove(classes.currentSlide);
-                    classl.add(classes.previousSlide);
-                } else if (i > index) {
-                    classl.remove(classes.currentSlide);
-                    classl.add(classes.nextSlide);
+                } else {
+                    frags.push([fragment]);
+                    gindex++;
                 }
             }
 
-            // Apply index
-            that._slideIndex = index;
+            return frags;
+        });
 
-            // Update fragment index
-            that._fragmentIndex = _fragments[index].reduce((ac, groups, ci) => {
-                const containsActiveFragment = groups.find(el => el.classList.contains(classes.activeFragment));
-                return containsActiveFragment ? ci + 1 : ac;
-            }, 0);
+        // Bind shortcuts
+        this._eventListeners = [
 
-            // Fire event
-            that._emit('onSlide');
-            return true;
-        },
+            // Listen for key-events
+            on(window, 'keyup', e => {
+                const match = cv => cv === e.code || cv === e.key;
+                const {shortcuts} = this._options;
+                const fns = ['nextSlide', 'previousSlide', 'lastSlide', 'firstSlide', 'nextFragment', 'previousFragment']; // Available shortcuts
 
-        nextFragment: () => that.jumpFragment(that._fragmentIndex + 1),
-        previousFragment: () => that.jumpFragment(that._fragmentIndex - 1),
-        jumpFragment(index) {
-            const fragments = that._fragments[that._slideIndex];
+                // Find corresponding shortcut action
+                const target = Object.keys(shortcuts).find(v => {
+                    const code = shortcuts[v];
+                    return Array.isArray(code) ? code.find(match) : match(code);
+                });
 
-            // Jump to next / previous slide if no further fragments
-            if (index < 0) {
-                return that.previousSlide();
-            } else if (index > fragments.length) {
-                return that.nextSlide();
-            }
+                // Check shortcut was found and execute function
+                target && fns.includes(target) && this[target]();
+            }),
 
-            // Apply class for previous and current fragment(s)
-            that._fragmentIndex = index;
-            const {activeFragment, currentFragment} = that.options.classes;
-            for (let i = 0, group; i < fragments.length && (group = fragments[i]); i++) {
-                const afAction = i < index ? 'add' : 'remove';
-                const cfAction = i === index - 1 ? 'add' : 'remove';
+            // Listen for touch-events
+            on(window, 'touchstart', e => {
+                const x = e && e.touches && e.touches[0] && e.touches[0].clientX;
+                const halfWidth = window.innerWidth / 2;
+                x > halfWidth ? this.nextFragment() : this.previousFragment();
+            })
+        ];
 
-                // Apply classes to groups
-                for (let j = 0, cl; j < group.length && (cl = group[j].classList); j++) {
-                    cl[afAction](activeFragment);
+        // Trigger
+        this.jumpSlide(this._options.slideIndex);
+        this._initActive = false;
 
-                    // Prevent removing a class-name which got used for both active and current fragmentsl
-                    if (activeFragment !== currentFragment) {
-                        cl[cfAction](currentFragment);
-                    }
-                }
-            }
+        // Fire init event
+        this._emit('onInit');
+    }
 
-            // Fire event
-            that._emit('onFragment');
-            return true;
-        },
+    // Helper function to fire events
+    _emit(name) {
+        const fn = this._options[name];
 
-        destroy() {
+        // Check if presentr is currently in initialization mode and cb is a function
+        if (!this._initActive && typeof fn === 'function') {
 
-            // Unbind event-listeners
-            that._eventListeners.forEach(args => off(...args));
-        },
+            // State slide stuff
+            const slideIndex = this._slideIndex;
+            const slides = this._slides.length - 1;
+            const slidePercent = slides === 0 ? 0 : slideIndex / slides;
 
-        get slideIndex() {
-            return that._slideIndex;
-        },
+            // State fragments stuff
+            const fragmentIndex = this._fragmentIndex;
+            const fragments = this._fragments[slideIndex].length;
+            const fragmentPercent = fragments === 0 ? 0 : fragmentIndex / fragments;
 
-        get fragmentIndex() {
-            return that._fragmentIndex;
+            const state = {
+                slideIndex,
+                slides, slidePercent,
+                fragmentIndex,
+                fragments,
+                fragmentPercent
+            };
+
+            // Call event-listener
+            fn.call(this, state);
+
+            // Call action listener
+            this._options.onAction(state);
         }
-    };
+    }
 
-    // Init and return factory object
-    that._init();
-    return that;
+    firstSlide() {
+        this.jumpSlide(0);
+    }
+
+    lastSlide() {
+        this.jumpSlide(this._slides.length - 1);
+    }
+
+    nextSlide() {
+        this.jumpSlide(this._slideIndex + 1);
+    }
+
+    previousSlide() {
+        this.jumpSlide(this._slideIndex - 1);
+    }
+
+    jumpSlide(index) {
+        const {_slides, _fragments, _options} = this;
+
+        // Validate
+        if (index < 0 || index >= _slides.length) {
+            return false;
+        }
+
+        const {classes} = _options;
+        for (let i = 0; i < _slides.length; i++) {
+            const classl = _slides[i].classList;
+
+            if (i === index) {
+                classl.add(classes.currentSlide);
+                classl.remove(classes.previousSlide);
+                classl.remove(classes.nextSlide);
+            } else if (i < index) {
+                classl.remove(classes.currentSlide);
+                classl.add(classes.previousSlide);
+            } else if (i > index) {
+                classl.remove(classes.currentSlide);
+                classl.add(classes.nextSlide);
+            }
+        }
+
+        // Apply index
+        this._slideIndex = index;
+
+        // Update fragment index
+        this._fragmentIndex = _fragments[index].reduce((ac, groups, ci) => {
+            const containsActiveFragment = groups.find(el => el.classList.contains(classes.activeFragment));
+            return containsActiveFragment ? ci + 1 : ac;
+        }, 0);
+
+        // Fire event
+        this._emit('onSlide');
+        return true;
+    }
+
+    nextFragment() {
+        this.jumpFragment(this._fragmentIndex + 1);
+    }
+
+    previousFragment() {
+        this.jumpFragment(this._fragmentIndex - 1);
+    }
+
+    jumpFragment(index) {
+        const fragments = this._fragments[this._slideIndex];
+
+        // Jump to next / previous slide if no further fragments
+        if (index < 0) {
+            return this.previousSlide();
+        } else if (index > fragments.length) {
+            return this.nextSlide();
+        }
+
+        // Apply class for previous and current fragment(s)
+        this._fragmentIndex = index;
+        const {activeFragment, currentFragment} = this._options.classes;
+        for (let i = 0, group; i < fragments.length && (group = fragments[i]); i++) {
+            const afAction = i < index ? 'add' : 'remove';
+            const cfAction = i === index - 1 ? 'add' : 'remove';
+
+            // Apply classes to groups
+            for (let j = 0, cl; j < group.length && (cl = group[j].classList); j++) {
+                cl[afAction](activeFragment);
+
+                // Prevent removing a class-name which got used for both active and current fragmentsl
+                if (activeFragment !== currentFragment) {
+                    cl[cfAction](currentFragment);
+                }
+            }
+        }
+
+        // Fire event
+        this._emit('onFragment');
+        return true;
+    }
+
+    destroy() {
+
+        // Unbind event-listeners
+        this._eventListeners.forEach(args => off(...args));
+    }
+
+    get slideIndex() {
+        return this._slideIndex;
+    }
+
+    get fragmentIndex() {
+        return this._fragmentIndex;
+    }
 }
 
 // Export function to indentify production-version
