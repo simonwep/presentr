@@ -267,7 +267,7 @@ class Presentr {
 }
 
 // Export function to indentify production-version
-Presentr.version = '0.0.4';
+Presentr.version = '1.0.0';
 
 // Export factory function
 export default Presentr;

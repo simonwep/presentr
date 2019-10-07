@@ -96,7 +96,6 @@ const presentr = new Presentr({
     // Start index. Does not change the slide sequence.
     slideIndex: 0,
 
-
     // CSS Classes to get control the appereance of slides and fragments
     classes: {
         previousSlide: 'previous-slide', // Class for slides behind the current one
