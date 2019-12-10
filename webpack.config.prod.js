@@ -28,6 +28,10 @@ module.exports = {
     plugins: [
         new webpack.BannerPlugin({
             banner: `Presentr ${version} MIT | https://github.com/Simonwep/presentr`
+        }),
+
+        new webpack.DefinePlugin({
+            VERSION: JSON.stringify(version)
         })
     ],
 

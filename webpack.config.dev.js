@@ -1,3 +1,5 @@
+const webpack = require('webpack');
+
 module.exports = {
     entry: './src/presentr.js',
 
@@ -14,6 +16,12 @@ module.exports = {
         host: '0.0.0.0',
         port: 3008
     },
+
+    plugins: [
+        new webpack.DefinePlugin({
+            VERSION: JSON.stringify('unknown')
+        })
+    ],
 
     module: {
         rules: [
