@@ -170,6 +170,7 @@ presentr.on('action', () => {
 * presentr.totalFragments _- Total amount of fragments in current slide._
 * presentr.slideIndex _- Current slide index._
 * presentr.fragmentIndex _- Current fragment index in slide._
+* presentr.globalFragmentCount _- Total amount of fragments on all slides combined._
 
 ## Contributing
 If you want to open a issue, create a Pull Request or simply want to know how you can run it on your local machine, please read the [Contributing guide](https://github.com/Simonwep/presentr/blob/master/.github/CONTRIBUTING.md).

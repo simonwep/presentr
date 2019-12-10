@@ -278,6 +278,10 @@ class Presentr {
         return this._slides.length - 1;
     }
 
+    get globalFragmentCount() {
+        return this._fragments.reduce((acc, cv) => acc + cv.length, 0);
+    }
+
     get totalFragments() {
         return this._fragments[this._slideIndex].length - 1;
     }
