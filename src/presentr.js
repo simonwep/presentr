@@ -1,5 +1,5 @@
-import assignDeep from './utils/assignDeep';
-import {off, on}  from './utils/eventListener';
+import assignDeep from './utils/assign-deep';
+import {off, on}  from './utils/event-listener';
 
 class Presentr {
 
@@ -35,17 +35,10 @@ class Presentr {
 
                 nextFragment: ['ArrowRight', 'ArrowDown'],
                 previousFragment: ['ArrowLeft', 'ArrowUp']
-            },
-
-            // Event listeners
-            onInit: () => 0,
-            onSlide: () => 0,
-            onFragment: () => 0,
-            onAction: () => 0
+            }
         }, opt);
 
         // Initialization state
-        this._initActive = true;
         const queryAll = (query, base) => Array.from(base.querySelectorAll(query));
 
         // Slides stuff
@@ -54,6 +47,15 @@ class Presentr {
 
         // Fragments stuff
         this._fragmentIndex = 0;
+
+        // Event-listener
+        this._boundEventListener = {
+            'slide': [],
+            'beforeSlide': [],
+            'fragment': [],
+            'beforeFragment': [],
+            'action': []
+        };
 
         // Resolve groups
         const {fragmentGroupPrefix} = this._options;
@@ -116,43 +118,46 @@ class Presentr {
 
         // Trigger
         this.jumpSlide(this._options.slideIndex);
-        this._initActive = false;
-
-        // Fire init event
-        this._emit('onInit');
     }
 
-    // Helper function to fire events
-    _emit(name) {
-        const fn = this._options[name];
-
-        // Check if presentr is currently in initialization mode and cb is a function
-        if (!this._initActive && typeof fn === 'function') {
-
-            // State slide stuff
-            const slideIndex = this._slideIndex;
-            const slides = this._slides.length - 1;
-            const slidePercent = slides === 0 ? 0 : slideIndex / slides;
-
-            // State fragments stuff
-            const fragmentIndex = this._fragmentIndex;
-            const fragments = this._fragments[slideIndex].length;
-            const fragmentPercent = fragments === 0 ? 0 : fragmentIndex / fragments;
-
-            const state = {
-                slideIndex,
-                slides, slidePercent,
-                fragmentIndex,
-                fragments,
-                fragmentPercent
-            };
-
-            // Call event-listener
-            fn.call(this, state);
-
-            // Call action listener
-            this._options.onAction(state);
+    /* eslint-disable callback-return */
+    _emit(event, args = {}) {
+        for (const cb of this._boundEventListener[event]) {
+            if (cb({
+                presentr: this,
+                ...args
+            }) === false) {
+                return false;
+            }
         }
+
+        return true;
+    }
+
+    on(event, cb) {
+
+        if (!(event in this._boundEventListener)) {
+            throw new Error(`No such event: ${event}`);
+        } else if (typeof cb !== 'function') {
+            throw new Error(`Callback must be a function`);
+        }
+
+        this._boundEventListener[event].push(cb);
+        return this;
+    }
+
+    off(event, cb) {
+        const callBacks = this._boundEventListener[event];
+
+        if (callBacks) {
+            const index = callBacks.indexOf(cb);
+
+            if (~index) {
+                callBacks.splice(index, 1);
+            }
+        }
+
+        return this;
     }
 
     firstSlide() {
@@ -178,6 +183,11 @@ class Presentr {
         if (index < 0 || index >= _slides.length) {
             return false;
         }
+
+        if (!this._emit('beforeSlide', {
+            from: this._slideIndex,
+            to: index
+        })) return;
 
         const {classes} = _options;
         for (let i = 0; i < _slides.length; i++) {
@@ -206,7 +216,8 @@ class Presentr {
         }, 0);
 
         // Fire event
-        this._emit('onSlide');
+        this._emit('slide');
+        this._emit('action');
         return true;
     }
 
@@ -220,6 +231,11 @@ class Presentr {
 
     jumpFragment(index) {
         const fragments = this._fragments[this._slideIndex];
+
+        if (!this._emit('beforeFragment', {
+            from: this._fragmentIndex,
+            to: index
+        })) return;
 
         // Jump to next / previous slide if no further fragments
         if (index < 0) {
@@ -247,7 +263,8 @@ class Presentr {
         }
 
         // Fire event
-        this._emit('onFragment');
+        this._emit('fragment');
+        this._emit('action');
         return true;
     }
 
@@ -255,6 +272,14 @@ class Presentr {
 
         // Unbind event-listeners
         this._eventListeners.forEach(args => off(...args));
+    }
+
+    get totalSlides() {
+        return this._slides.length - 1;
+    }
+
+    get totalFragments() {
+        return this._fragments[this._slideIndex].length - 1;
     }
 
     get slideIndex() {

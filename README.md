@@ -107,7 +107,6 @@ const presentr = new Presentr({
         currentFragment: 'current-frag'
     },
 
-
     // Keyboard shortcuts.
     shortcuts: {
 
@@ -123,32 +122,35 @@ const presentr = new Presentr({
         // the next action would jump to the next / previous slide.
         nextFragment: ['ArrowRight', 'ArrowDown'],
         previousFragment: ['ArrowLeft', 'ArrowUp']
-    },
-
-    // Will be called on every slide change. The context will be the current presentr instance.
-    onSlide(state) {
-        state.slideIndex;      // Current slide index
-        state.slides;          // Slides as HTMLElements (Array)
-        state.slidePercent;    // Decimal percent value of how much of your slides are over
-        state.fragmentIndex;   // Current fragment index
-        state.fragments;       // Fragments as array in an array which index is the slide index
-        state.fragmentPercent;  // Same as slidePercent but for fragments on the current slide
-    },
-
-    // Will be called on every fragment change.
-    onFragment(state) {
-        // Same as onSlide
-    },
-
-    // Will be called on every slide or fragment change.
-    onAction(state) {
-        // Same as onSlide
-    },
-
-    // Initialization event, will be called on first initialization of presenter.
-    onInit(state) {
-        // Same as onSlide
     }
+});
+```
+
+## Events
+Since version `1.1.x` Presentr is event-driven. Use the `on(event, cb)` and `off(event, cb)` functions to bind / unbind eventlistener.
+
+| Event      | Description | Arguments |
+| -------------- | ----------- | ----------- | 
+| `action`       | Fires both on `slide` and `fragment` | `{presentr: PickrInstance}` |
+| `beforeSlide`  | Before slide changes | `{presentr: PickrInstance, from: slideIndex, to: slideIndex}` |
+| `slide`        | Slide changed | `{presentr: PickrInstance}` |
+| `beforeFragment` | Before fragment changes | `{presentr: PickrInstance, from: fragmentIndex, to: fragmentIndex}` |
+| `fragment`     | Fragment changed | `PickrInstance` |
+
+> Example:
+```js
+presentr.on('action', () => {
+    console.log('action');
+}).on('beforeSlide', obj => {
+    console.log('beforeSlide', obj);
+    // Return false explicitly to block slide
+}).on('beforeFragment', obj => {
+    console.log('beforeFragment', obj);
+    // Return false explicitly to block fragment
+}).on('slide', () => {
+    console.log('slide');
+}).on('fragment', () => {
+    console.log('fragment');
 });
 ```
 
@@ -162,6 +164,12 @@ const presentr = new Presentr({
 * presentr.previousFragment() _- Jump to previous fragment, if start reached the previous slide will be shown._
 * presentr.jumpFragment(index`:Number`) _- Jump to a specific fragment on the current slide._
 * presentr.destroy() _- Destroys the presentr instance and unbinds all event-listeners._
+
+## Getters
+* presentr.totalSlides _- Total amount of slides._
+* presentr.totalFragments _- Total amount of fragments in current slide._
+* presentr.slideIndex _- Current slide index._
+* presentr.fragmentIndex _- Current fragment index in slide._
 
 ## Contributing
 If you want to open a issue, create a Pull Request or simply want to know how you can run it on your local machine, please read the [Contributing guide](https://github.com/Simonwep/presentr/blob/master/.github/CONTRIBUTING.md).
