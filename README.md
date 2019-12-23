@@ -51,7 +51,7 @@ $ npm install @simonwep/presentr --save
 
 Include code and style:
 ```js
-import Presentr from 'Presentr';
+import presentr from '@simonwep/presentr';
 ```
 ---
 ### Browser
