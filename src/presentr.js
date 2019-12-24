@@ -283,7 +283,7 @@ class Presentr {
     }
 
     get totalFragments() {
-        return this._fragments[this._slideIndex].length - 1;
+        return this._fragments[this._slideIndex].length;
     }
 
     get slideIndex() {
