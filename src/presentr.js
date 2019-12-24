@@ -1,93 +1,91 @@
 import assignDeep from './utils/assign-deep';
 import {off, on}  from './utils/event-listener';
+import {queryAll} from './utils/query-all';
 
 class Presentr {
 
+    // Current slide-index
+    _slideIndex = 0;
+
+    // Event-listener
+    _boundEventListener = {
+        'slide': [],
+        'beforeSlide': [],
+        'fragment': [],
+        'beforeFragment': [],
+        'action': []
+    };
+
+    _options = {
+
+        // Query selectors
+        slides: '.presentr .slides > section',
+        fragments: '.frag',
+
+        // CSS Group prefix
+        fragmentGroupPrefix: 'g-',
+
+        // Start index
+        slideIndex: 0,
+
+        // CSS classes
+        classes: {
+            previousSlide: 'previous-slide',
+            nextSlide: 'next-slide',
+            currentSlide: 'current-slide',
+            activeFragment: 'active-frag',
+            currentFragment: 'current-frag'
+        },
+
+        // Keyboard shortcuts
+        shortcuts: {
+            nextSlide: ['d', 'D'],
+            previousSlide: ['a', 'A'],
+
+            firstSlide: ['y', 'Y'],
+            lastSlide: ['x', 'X'],
+
+            nextFragment: ['ArrowRight', 'ArrowDown'],
+            previousFragment: ['ArrowLeft', 'ArrowUp']
+        }
+    };
+
     constructor(opt = {}) {
-        this._options = assignDeep({
 
-            // Query selectors
-            slides: '.presentr .slides > section',
-            fragments: '.frag',
+        // Override default options
+        assignDeep(this._options, opt);
 
-            // CSS Group prefix
-            fragmentGroupPrefix: 'g-',
-
-            // Start index
-            slideIndex: 0,
-
-            // CSS classes
-            classes: {
-                previousSlide: 'previous-slide',
-                nextSlide: 'next-slide',
-                currentSlide: 'current-slide',
-                activeFragment: 'active-frag',
-                currentFragment: 'current-frag'
-            },
-
-            // Keyboard shortcuts
-            shortcuts: {
-                nextSlide: ['d', 'D'],
-                previousSlide: ['a', 'A'],
-
-                firstSlide: ['y', 'Y'],
-                lastSlide: ['x', 'X'],
-
-                nextFragment: ['ArrowRight', 'ArrowDown'],
-                previousFragment: ['ArrowLeft', 'ArrowUp']
-            }
-        }, opt);
-
-        // Initialization state
-        const queryAll = (query, base) => Array.from(base.querySelectorAll(query));
-
-        // Slides stuff
-        this._slideIndex = null;
-        this._slides = queryAll(this._options.slides, document);
-
-        // Fragments stuff
-        this._fragmentIndex = 0;
-
-        // Event-listener
-        this._boundEventListener = {
-            'slide': [],
-            'beforeSlide': [],
-            'fragment': [],
-            'beforeFragment': [],
-            'action': []
-        };
-
-        // Resolve groups
+        // Resolve slides and their fragments
         const {fragmentGroupPrefix} = this._options;
-        this._fragments = this._slides.map(s => {
-            const groups = {};
-            const frags = [];
-            const fg = queryAll(this._options.fragments, s);
+        const slides = queryAll(this._options.slides, document);
 
-            // Cluster elements which are grouped
-            let gindex = 0; // Index ignoring the total amoun of fragments
-            for (let i = 0; i < fg.length; i++) {
-                const fragment = fg[i];
-                const group = Array.from(fragment.classList)
+        this._slides = [];
+        for (const slideElement of slides) {
+            const groupIndexes = new Map();
+            const fragments = queryAll(this._options.fragments, slideElement)
+                .map(v => [v]);
+
+            for (let i = 0; i < fragments.length; i++) {
+                const group = Array.from(fragments[i][0].classList)
                     .find(v => v.startsWith(fragmentGroupPrefix));
 
                 if (group) {
-                    if (group in groups) {
-
-                        frags[groups[group]].push(fragment);
+                    if (groupIndexes.has(group)) {
+                        const [arr] = fragments.splice(i, 1);
+                        fragments[groupIndexes.get(group)].push(arr[0]);
+                        i--;
                     } else {
-                        groups[group] = gindex;
-                        frags.push([fragment]);
-                        gindex++;
+                        groupIndexes.set(group, i);
                     }
-                } else {
-                    frags.push([fragment]);
-                    gindex++;
                 }
             }
 
-            return frags;
-        });
+            this._slides.push({
+                el: slideElement,
+                fragments,
+                fragmentIndex: 0
+            });
+        }
 
         // Bind shortcuts
         this._eventListeners = [
@@ -117,7 +115,7 @@ class Presentr {
         ];
 
         // Trigger
-        this.jumpSlide(this._options.slideIndex);
+        this.jumpSlide(this._options.slideIndex || 0);
     }
 
     /* eslint-disable callback-return */
@@ -177,7 +175,7 @@ class Presentr {
     }
 
     jumpSlide(index) {
-        const {_slides, _fragments, _options} = this;
+        const {_slides, _options} = this;
 
         // Validate
         if (index < 0 || index >= _slides.length) {
@@ -191,7 +189,7 @@ class Presentr {
 
         const {classes} = _options;
         for (let i = 0; i < _slides.length; i++) {
-            const classl = _slides[i].classList;
+            const classl = _slides[i].el.classList;
 
             if (i === index) {
                 classl.add(classes.currentSlide);
@@ -209,12 +207,6 @@ class Presentr {
         // Apply index
         this._slideIndex = index;
 
-        // Update fragment index
-        this._fragmentIndex = _fragments[index].reduce((ac, groups, ci) => {
-            const containsActiveFragment = groups.find(el => el.classList.contains(classes.activeFragment));
-            return containsActiveFragment ? ci + 1 : ac;
-        }, 0);
-
         // Fire event
         this._emit('slide');
         this._emit('action');
@@ -222,47 +214,47 @@ class Presentr {
     }
 
     nextFragment() {
-        this.jumpFragment(this._fragmentIndex + 1);
+        this.jumpFragment(this._currentSlide.fragmentIndex + 1);
     }
 
     previousFragment() {
-        this.jumpFragment(this._fragmentIndex - 1);
+        this.jumpFragment(this._currentSlide.fragmentIndex - 1);
     }
 
     jumpFragment(index) {
-        const fragments = this._fragments[this._slideIndex];
+        const slide = this._currentSlide;
 
         if (!this._emit('beforeFragment', {
-            from: this._fragmentIndex,
+            from: slide.fragmentIndex,
             to: index
         })) return;
 
         // Jump to next / previous slide if no further fragments
         if (index < 0) {
             return this.previousSlide();
-        } else if (index > fragments.length) {
+        } else if (index > slide.fragments.length) {
             return this.nextSlide();
         }
 
         // Apply class for previous and current fragment(s)
-        this._fragmentIndex = index;
+        slide.fragmentIndex = index;
         const {activeFragment, currentFragment} = this._options.classes;
-        for (let i = 0, group; i < fragments.length && (group = fragments[i]); i++) {
+
+        for (let i = 0; i < slide.fragments.length; i++) {
             const afAction = i < index ? 'add' : 'remove';
             const cfAction = i === index - 1 ? 'add' : 'remove';
 
-            // Apply classes to groups
-            for (let j = 0, cl; j < group.length && (cl = group[j].classList); j++) {
-                cl[afAction](activeFragment);
+            for (const {classList} of slide.fragments[i]) {
+                classList[afAction](activeFragment);
 
                 // Prevent removing a class-name which got used for both active and current fragmentsl
                 if (activeFragment !== currentFragment) {
-                    cl[cfAction](currentFragment);
+                    classList[cfAction](currentFragment);
                 }
             }
         }
 
-        // Fire event
+        // Fire events
         this._emit('fragment');
         this._emit('action');
         return true;
@@ -274,16 +266,20 @@ class Presentr {
         this._eventListeners.forEach(args => off(...args));
     }
 
+    get _currentSlide() {
+        return this._slides[this._slideIndex];
+    }
+
     get totalSlides() {
-        return this._slides.length - 1;
+        return this._slides.length;
     }
 
     get globalFragmentCount() {
-        return this._fragments.reduce((acc, cv) => acc + cv.length, 0);
+        return this._slides.reduce((acc, cv) => acc + cv.fragments.length, 0);
     }
 
     get totalFragments() {
-        return this._fragments[this._slideIndex].length;
+        return this._currentSlide.fragments.length;
     }
 
     get slideIndex() {
@@ -291,7 +287,7 @@ class Presentr {
     }
 
     get fragmentIndex() {
-        return this._fragmentIndex;
+        return this._currentSlide.fragmentIndex;
     }
 }
 

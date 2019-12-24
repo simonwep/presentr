@@ -1,0 +1,1 @@
+export const queryAll = (query, base) => Array.from(base.querySelectorAll(query));
