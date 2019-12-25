@@ -1,4 +1,3 @@
-const TerserPlugin = require('terser-webpack-plugin');
 const {version} = require('./package');
 const webpack = require('webpack');
 
@@ -33,21 +32,5 @@ module.exports = {
         new webpack.DefinePlugin({
             VERSION: JSON.stringify(version)
         })
-    ],
-
-    optimization: {
-        minimizer: [
-            new TerserPlugin({
-                extractComments: false,
-                sourceMap: true,
-                terserOptions: {
-                    mangle: {
-                        properties: {
-                            regex: /^_/
-                        }
-                    }
-                }
-            })
-        ]
-    }
+    ]
 };
