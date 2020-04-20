@@ -1,6 +1,7 @@
-import assignDeep from './utils/assign-deep';
-import {off, on}  from './utils/event-listener';
-import {queryAll} from './utils/query-all';
+import assignDeep  from './utils/assign-deep';
+import {off, on}   from './utils/event-listener';
+import {queryAll}  from './utils/query-all';
+import {wrapArray} from './utils/wrap-array';
 
 class Presentr {
 
@@ -192,15 +193,15 @@ class Presentr {
             const classl = _slides[i].el.classList;
 
             if (i === index) {
-                classl.add(classes.currentSlide);
-                classl.remove(classes.previousSlide);
-                classl.remove(classes.nextSlide);
+                classl.add(...wrapArray(classes.currentSlide));
+                classl.remove(...wrapArray(classes.previousSlide));
+                classl.remove(...wrapArray(classes.nextSlide));
             } else if (i < index) {
-                classl.remove(classes.currentSlide);
-                classl.add(classes.previousSlide);
+                classl.remove(...wrapArray(classes.currentSlide));
+                classl.add(...wrapArray(classes.previousSlide));
             } else if (i > index) {
-                classl.remove(classes.currentSlide);
-                classl.add(classes.nextSlide);
+                classl.remove(...wrapArray(classes.currentSlide));
+                classl.add(...wrapArray(classes.nextSlide));
             }
         }
 
@@ -236,20 +237,23 @@ class Presentr {
             return this.nextSlide();
         }
 
-        // Apply class for previous and current fragment(s)
         slide.fragmentIndex = index;
+
+        // Apply class for previous and current fragment(s)
         const {activeFragment, currentFragment} = this._options.classes;
+        const {fragments} = slide;
+        const af = wrapArray(activeFragment);
+        const cf = wrapArray(currentFragment);
+        for (let i = 0; i < fragments.length; i++) {
+            for (const sf of fragments[i]) {
+                sf.classList.remove(...cf);
+                sf.classList.remove(...af);
 
-        for (let i = 0; i < slide.fragments.length; i++) {
-            const afAction = i < index ? 'add' : 'remove';
-            const cfAction = i === index - 1 ? 'add' : 'remove';
-
-            for (const {classList} of slide.fragments[i]) {
-                classList[afAction](activeFragment);
-
-                // Prevent removing a class-name which got used for both active and current fragmentsl
-                if (activeFragment !== currentFragment) {
-                    classList[cfAction](currentFragment);
+                if (i < index) {
+                    sf.classList.add(...af);
+                } else if (i === index) {
+                    sf.classList.add(...af);
+                    sf.classList.add(...cf);
                 }
             }
         }

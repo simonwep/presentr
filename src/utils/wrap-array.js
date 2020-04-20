@@ -1,0 +1,1 @@
+export const wrapArray = val => Array.isArray(val) ? val : [val];
