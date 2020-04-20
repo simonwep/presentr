@@ -189,19 +189,23 @@ class Presentr {
         })) return;
 
         const {classes} = _options;
+        const cs = wrapArray(classes.currentSlide);
+        const ps = wrapArray(classes.previousSlide);
+        const ns = wrapArray(classes.nextSlide);
+
         for (let i = 0; i < _slides.length; i++) {
             const classl = _slides[i].el.classList;
 
             if (i === index) {
-                classl.add(...wrapArray(classes.currentSlide));
-                classl.remove(...wrapArray(classes.previousSlide));
-                classl.remove(...wrapArray(classes.nextSlide));
+                classl.remove(...ps);
+                classl.remove(...ns);
+                classl.add(...cs);
             } else if (i < index) {
-                classl.remove(...wrapArray(classes.currentSlide));
-                classl.add(...wrapArray(classes.previousSlide));
+                classl.remove(...cs);
+                classl.add(...ps);
             } else if (i > index) {
-                classl.remove(...wrapArray(classes.currentSlide));
-                classl.add(...wrapArray(classes.nextSlide));
+                classl.remove(...cs);
+                classl.add(...ns);
             }
         }
 
@@ -242,6 +246,7 @@ class Presentr {
         // Apply class for previous and current fragment(s)
         const {activeFragment, currentFragment} = this._options.classes;
         const {fragments} = slide;
+
         const af = wrapArray(activeFragment);
         const cf = wrapArray(currentFragment);
         for (let i = 0; i < fragments.length; i++) {
@@ -249,9 +254,9 @@ class Presentr {
                 sf.classList.remove(...cf);
                 sf.classList.remove(...af);
 
-                if (i < index) {
+                if (i < (index - 1)) {
                     sf.classList.add(...af);
-                } else if (i === index) {
+                } else if (i === (index - 1)) {
                     sf.classList.add(...af);
                     sf.classList.add(...cf);
                 }
